@@ -1,0 +1,254 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using UserService.Data;
+using UserService.Helper;
+using UserService.Models;
+using System.IO;
+using UserService.Models.DTOs;
+using UserService.Models.AuthUser;
+
+namespace UserService.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        public UsersController(ApplicationDbContext context, IHttpContextAccessor contextAccessor)
+        {
+            _context = context;
+            _contextAccessor = contextAccessor;
+        }
+        [HttpGet("GetAllUsers")]
+        [Authorize]
+        public async Task<List<ApplicationUser>> GetUser()
+        {
+            var users = await _context.Users
+                                      .Where(x => x.Status == Status.Active.ToString())
+                                      .ToListAsync();
+            return users;
+        }
+
+        [HttpGet("GetUsersById{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
+        {
+            var user = await _context.Users
+                .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
+                .FirstOrDefaultAsync(); // Ensure a single user is retrieved
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
+        [HttpPut("PutUser{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApplicationUser>> UpdateUser(string id, UserUpdateDto user)
+        {
+            var UpdateUser = await _context.Users
+                .Where(x => x.Id == id && x.Status == Status.Active.ToString())
+                .FirstOrDefaultAsync();
+
+            if (UpdateUser == null)
+            {
+                return NotFound("User not found or inactive.");
+            }
+
+            // Update fields
+            UpdateUser.Name = user.Name;
+        
+            UpdateUser.PhoneNumber = user.PhoneNumber;
+            UpdateUser.Address = user.Address;
+            UpdateUser.Password = user.Password;
+            UpdateUser.Cnic = user.Cnic;
+            UpdateUser.City = user.City;
+            UpdateUser.DateofBirth = user.DateofBirth;
+            UpdateUser.Gender = user.Gender;
+
+            // Update Images (Only if new images are provided)
+            if (user.UserImage != null)
+            {
+                DeleteFile(UpdateUser.UserImageName);
+                UpdateUser.UserImageName = await SaveFileAsync(user.UserImage, "UserImages");
+            }
+
+            if (user.CertificateImage != null)
+            {
+                DeleteFile(UpdateUser.CertificateImageName);
+                UpdateUser.CertificateImageName = await SaveFileAsync(user.CertificateImage, "UserCertificateImages");
+            }
+
+            if (user.CnicImage != null)
+            {
+                DeleteFile(UpdateUser.CnicImageName);
+                UpdateUser.CnicImageName = await SaveFileAsync(user.CnicImage, "UserCnicImages");
+            }
+
+            UpdateUser.ModifiedDate = DateTime.UtcNow;
+
+            // **Ensure EntityState is Modified**
+            _context.Entry(UpdateUser).State = EntityState.Modified;
+
+            // **Save changes to DB**
+            await _context.SaveChangesAsync();
+
+            return Ok(UpdateUser);
+        }
+        [HttpGet("GetUserData")]
+        public async Task<UserGetDto> GetUserData()
+        {
+            Console.WriteLine("hit hoi ha \n \n \n \n \n \n \n \n \n  ");
+            var authUser = new AuthUser(_contextAccessor.HttpContext.Request);
+            var user = await _context.Users.Where(x => x.Id == authUser.Id).FirstOrDefaultAsync();
+            var User = new UserGetDto
+            {
+                Name = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.Password,
+                Address = user.Address,
+                Cnic = user.Cnic,
+                Status = user.Status,
+                Role = user.Role,
+                Gender = user.Gender,
+                City = user.City,
+                CnicImageName = user.CnicImageName,
+                UserImageName = user.UserImageName,
+                CertificateImageName = user.CertificateImageName,
+                //DateofBirth = user.DateofBirth,
+                ResetToken = user.ResetToken,
+               // TokenExpiry = user.TokenExpiry,
+                Experience = user.Experience,
+                Job = user.Job,
+                //CreatedDate = user.CreatedDate,
+                //ModifiedDate = user.ModifiedDate,
+               
+            };
+
+
+            return User;
+        }
+        //[HttpPut("UpdateUserProfile")]
+        //public async Task<ActionResult> UpdateUserProfile(string id, UserUpdateDto user)
+        //{
+
+        //}
+        [HttpPost("AddUser")]
+        [Authorize]
+        public async Task<ActionResult<ApplicationUser>> AddUser(UserCreateDto UserCreateDto)
+        {
+            var user = new ApplicationUser
+            {
+                Name = UserCreateDto.Name,
+                PhoneNumber = UserCreateDto.PhoneNumber,
+                Password = UserCreateDto.Password,
+                Address = UserCreateDto.Address,
+                Cnic = UserCreateDto.Cnic,
+                Gender = UserCreateDto.Gender,
+                City = UserCreateDto.City,
+                DateofBirth = UserCreateDto.DateofBirth,
+            };
+            if(UserCreateDto.UserImage!=null)
+            {
+               user.UserImageName=await SaveFileAsync(UserCreateDto.UserImage, "UserImages");
+            }
+            else
+            {
+                user.UserImageName = null;
+            }
+            if (UserCreateDto.CnicImage != null)
+            {
+                user.CnicImageName = await SaveFileAsync(UserCreateDto.CnicImage, "UserCnicImages");
+            }
+            else
+            {
+                user.CnicImageName = null;
+            }
+            if (UserCreateDto.CertificateImage != null)
+            {
+                user.CertificateImageName = await SaveFileAsync(UserCreateDto.CertificateImage, "UserCertificateImages");
+            }
+            else
+            {
+                user.CertificateImageName = null;
+            }
+            user.Role = Role.User.ToString();
+            user.CreatedDate=DateTime.UtcNow;
+            user.Status = Status.Active.ToString();
+            user.ModifiedDate=null;
+            user.ResetToken = null;
+            user.TokenExpiry = null;
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+ 
+        [Authorize]
+        [HttpDelete("DeleteUser{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.Status = Status.Blocked.ToString();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+        private static async Task<string> SaveFileAsync(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("Invalid file");
+
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", folderName);
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(folderPath, fileName);
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while saving the file", ex);
+            }
+
+            return $"/{folderName}/{fileName}";
+        }
+        private static void DeleteFile(string filePath)
+        {
+            if (filePath != null)
+            {
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
+                if (System.IO.File.Exists(fullPath))
+                {
+                    System.IO.File.Delete(fullPath);
+                }
+            }
+        }
+        private bool UserExists(string id)
+        {
+            return _context.Users.Any(e => e.Id == id);
+        }
+    }
+}
