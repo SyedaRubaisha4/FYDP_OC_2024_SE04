@@ -12,7 +12,7 @@ namespace JobPost_Service.RabbitMQ
             _requestClient = requestClient;
         }
 
-        public async Task<object> RequestUserById(string userId)
+        public async Task<PublishedUser> RequestUserById(string userId)
         {
             var response = await _requestClient.GetResponse<UserResponseMessage>(new UserRequestMessage { UserId = userId });
             return response.Message.User;

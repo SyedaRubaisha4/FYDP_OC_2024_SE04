@@ -8,6 +8,6 @@ namespace SharedLibrary
 {
     public class UserResponseMessage
     {
-        public object User { get; set; }
+        public PublishedUser User { get; set; }
     }
 }

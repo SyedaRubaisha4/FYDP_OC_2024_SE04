@@ -3,7 +3,7 @@
     public class UserJobCreateDTO
     {
 
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public long? JobId { get; set; }
 
     }
