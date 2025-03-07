@@ -1,5 +1,7 @@
 using JobPost_Service.Data;
 using JobPost_Service.Models;
+using JobPost_Service.RabbitMQ;
+
 //using JobPost_Service.RabbitMQ;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +20,8 @@ builder.Services.AddHttpContextAccessor();  // <-- Add this line
 // Add MassTransit and RabbitMQ
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<UserConsumer>();  // Register the consumer
+    x.AddConsumer<UserConsumer>();  // Register the consume
+    x.AddRequestClient<UserRequestMessage>(new Uri("queue:user-service-queue"));
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -42,8 +45,11 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+
 // Register UserConsumer for dependency injection
 builder.Services.AddScoped<IConsumer<PublishedUser>, UserConsumer>();
+
+builder.Services.AddScoped<UserRequestProducer>();
 
 // User Service for the storage of data
 // Add Memory Cache to the container

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-
-
-namespace SharedLibrary
+﻿namespace JobPost_Service.Models.DTOs
 {
-    public class PublishedUser
+    public class UserDTO
     {
-        [Key]
         public string? Id { get; set; }
         public string? Name { get; set; }
 
@@ -18,6 +11,5 @@ namespace SharedLibrary
         public string? Experience { get; set; }
         public string? Job { get; set; }
         public string? UserImage { get; set; }
-
     }
 }

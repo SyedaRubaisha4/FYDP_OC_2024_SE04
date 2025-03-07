@@ -1,4 +1,4 @@
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserService.Data;
@@ -44,29 +44,26 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Add MassTransit and RabbitMQ
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<UserRequestConsumer>(); // ✅ Register the consumer
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("rabbitmq://localhost", h =>
         {
-            h.Username("guest");  // Default RabbitMQ username
-            h.Password("guest");  // Default RabbitMQ password
+            h.Username("guest");
+            h.Password("guest");
         });
 
-        // Configure a Fanout Exchange
-        cfg.Message<PublishedUser>(configTopology =>
+        cfg.ReceiveEndpoint("user-service-queue", e =>
         {
-            configTopology.SetEntityName("user-exchange"); // Set the exchange name
-        });
-
-        cfg.Publish<PublishedUser>(publishConfig =>
-        {
-            publishConfig.ExchangeType = RabbitMQ.Client.ExchangeType.Fanout; ; // Use "fanout" for broadcasting to multiple queues
+            e.ConfigureConsumer<UserRequestConsumer>(context);
         });
     });
 });
+
+
 builder.Services.AddScoped<IUserProducer, UserProducer>();
 builder.Services.AddScoped<JwtTokenHelper>();
 
@@ -173,6 +170,8 @@ builder.Services.AddAuthentication(options =>
         )
     };
 });
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<UserRequestConsumer>();
 
 
 var app = builder.Build();

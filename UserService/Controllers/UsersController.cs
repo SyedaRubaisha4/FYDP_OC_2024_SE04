@@ -9,9 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Data;
 using UserService.Helper;
 using UserService.Models;
-using System.IO;
 using UserService.Models.DTOs;
 using UserService.Models.AuthUser;
+using SharedLibrary;
+using UserService.RabbitMQ;
 
 namespace UserService.Controllers
 {
@@ -21,11 +22,12 @@ namespace UserService.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
-
-        public UsersController(ApplicationDbContext context, IHttpContextAccessor contextAccessor)
+        private readonly IUserProducer _userProducer;
+        public UsersController(ApplicationDbContext context, IHttpContextAccessor contextAccessor, IUserProducer userProducer)
         {
             _context = context;
             _contextAccessor = contextAccessor;
+            _userProducer = userProducer;
         }
         [HttpGet("GetAllUsers")]
         [Authorize]
@@ -41,10 +43,21 @@ namespace UserService.Controllers
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
+
             var user = await _context.Users
                 .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
-                .FirstOrDefaultAsync(); // Ensure a single user is retrieved
-
+                .FirstOrDefaultAsync();
+            var publishedUser = new PublishedUser
+            {
+                Id = user.Id,
+                Name = $"{user.Name}",
+                PhoneNumber = user.PhoneNumber,
+                Experience=user.Experience,
+                UserImage=user.UserImageName,
+                Job=user.Job,
+                City=user.Job,
+            };
+            await _userProducer.PublishUser(publishedUser);
             if (user == null)
             {
                 return NotFound();

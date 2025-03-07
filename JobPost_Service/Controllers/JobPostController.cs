@@ -15,7 +15,7 @@ namespace JobPost_Service.Controllers
     public class JobPostController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMemoryCache _memoryCache;  // Inject IMemoryCache
+        private readonly IMemoryCache _memoryCache;  
 
         public JobPostController(ApplicationDbContext context, IMemoryCache memoryCache)
         {
@@ -55,7 +55,6 @@ namespace JobPost_Service.Controllers
         }
 
         
-        // Ensure this endpoint requires authentication
         [HttpPost]
         public async Task<ActionResult<JobPost>> CreateJobPost(JobPost jobPost)
         {
