@@ -13,6 +13,7 @@ namespace JobPost_Service.Data
         public DbSet<PublishedUser> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserJob> UserJob { get; set; }
+        public DbSet<UserService> UserService { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

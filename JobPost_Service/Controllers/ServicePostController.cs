@@ -46,18 +46,16 @@ namespace JobPost_Service.Controllers
         [HttpPost]
         public async Task<ActionResult<ServicePost>> CreateServicePost(ServicePost servicePost)
         {
-            // Automatically set values for missing fields
-            if (!_memoryCache.TryGetValue("User", out PublishedUser user))
-            {
-                return BadRequest("No user found in cache.");
-            }
+             if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+                {
+                    return BadRequest("No user found in cache.");
+                }
 
-            servicePost.UserId = user?.Id ?? "123"; // Replace with user logic
-        //    servicePost.CategoryId = 1; // Replace with a default or determined category ID
-            servicePost.Status = PostStatus.Pending; // Default status
-            servicePost.DatePosted = DateTime.UtcNow; // Current date and time in UTC
+            servicePost.UserId = user .Id?? "123"; 
+            servicePost.Status = PostStatus.Pending; 
+            servicePost.DatePosted = DateTime.UtcNow; 
 
-            // Add the ServicePost to the context
+          
             _context.ServicePosts.Add(servicePost);
             await _context.SaveChangesAsync();
 
@@ -109,12 +107,9 @@ namespace JobPost_Service.Controllers
 
             return NoContent();
         }
-
         private bool ServicePostExists(int id)
         {
             return _context.ServicePosts.Any(e => e.Id == id);
-        }
-
-     //hello world 
+        }    
     }
 }

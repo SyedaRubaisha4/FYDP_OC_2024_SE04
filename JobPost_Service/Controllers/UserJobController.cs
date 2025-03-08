@@ -91,12 +91,7 @@ namespace JobPost_Service.Controllers
 
             }
         }
-        [HttpGet("GetAlluser")]
-        public async Task<IActionResult> GetAlluser()
-        {
-            var allusers = _context.UserJob.Where(x => x.Status == Status.Active.ToString()).ToList();
-            return Ok(allusers);
-        }
+       
         [HttpGet("GetApplicantsByJob/{jobId}")]
         public async Task<IActionResult> GetApplicantsByJob(long jobId)
         {
@@ -108,6 +103,45 @@ namespace JobPost_Service.Controllers
             {
                 PublishedUser getuser = await _userRequestProducer. RequestUserById(u);
                  userList.Add(getuser);
+            }
+            return Ok(userList);
+        }
+
+        [HttpPost("CreateUserService")]
+        public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
+        {
+            //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+            //{
+            //    return BadRequest("No user found in cache.");
+            //}
+
+            var UserService = new UserService
+            {
+                UserId = UserServiceCreateDTO.UserId,
+                ServiceId = UserServiceCreateDTO.ServiceId,
+                CreatedDate = DateTime.Now,
+                Status = Status.Active.ToString(),
+                ModifiedDate = null
+            };
+            if (UserService.ServiceId != null)
+            {
+                _context.UserService.Add(UserService);
+                await _context.SaveChangesAsync();
+                return Ok(UserService);
+            }
+            return BadRequest("ServiceId is null");
+        }
+        [HttpGet("GetApplicantsByService/{ServiceId}")]
+        public async Task<IActionResult> GetApplicantsByService(long ServiceId)
+        {
+            var userJobEntries = await _context.UserService
+                .Where(uj => uj.ServiceId == ServiceId && uj.Status == "Active")
+                .Select(uj => uj.UserId).ToListAsync();
+            var userList = new List<PublishedUser>();
+            foreach (var u in userJobEntries)
+            {
+                PublishedUser getuser = await _userRequestProducer.RequestUserById(u);
+                userList.Add(getuser);
             }
             return Ok(userList);
         }
