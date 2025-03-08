@@ -26,10 +26,15 @@ namespace JobPost_Service.Controllers
 
         [HttpPost("CreateUserjob")]
         public async Task<ActionResult<UserJob>> CreateUserJob(UserJobCreateDTO UserJobCreateDTO)
-        {          
+        {
+            if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+            {
+                return BadRequest("No user found in cache.");
+            }
+
             var UserJob = new UserJob
             {
-                UserId = UserJobCreateDTO.UserId, 
+                UserId = user?.Id ?? "123",
                 JobId = UserJobCreateDTO.JobId,
                 CreatedDate = DateTime.Now,
                 Status = Status.Active.ToString(),

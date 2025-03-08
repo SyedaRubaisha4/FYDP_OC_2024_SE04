@@ -203,5 +203,32 @@ namespace JobService.Controllers
                 return StatusCode(500, new { Error = "An error occurred.", Details = ex.Message });
             }
         }
+        [HttpGet("GetAllJobsAndServices")]
+        public async Task<IActionResult> GetAllJobsAndServices()
+        {
+            try
+            {
+                var jobs = await _context.JobPosts
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var services = await _context.ServicePosts
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                if (!jobs.Any() && !services.Any())
+                {
+                    return NotFound(new { Message = "No jobs or services found." });
+                }
+
+                return Ok(new { Jobs = jobs, Services = services });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching jobs and services: {ex.Message}");
+                return StatusCode(500, new { Error = "An error occurred.", Details = ex.Message });
+            }
+        }
+
     }
 }
