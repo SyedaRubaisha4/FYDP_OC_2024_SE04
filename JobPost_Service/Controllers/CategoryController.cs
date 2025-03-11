@@ -94,7 +94,8 @@ namespace JobService.Controllers
             };
             if (CategoryDto.CategoryImage != null && CategoryDto.CategoryImage.Length > 0)
             {
-                string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Image");
+                string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CategoryImages");
+
                 Directory.CreateDirectory(uploadFolder);
 
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(CategoryDto.CategoryImage.FileName);
