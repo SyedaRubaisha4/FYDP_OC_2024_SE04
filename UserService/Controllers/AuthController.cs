@@ -35,11 +35,7 @@ namespace UserService.Controllers
             _userProducer = userProducer;
             _jwtTokenHelper = jwtTokenHelper;
         }
-        //public AuthController( JwtTokenHelper jwtTokenHelper, ApplicationDbContext context)//, IUserProducer userProducer)
-        //{
-        //    _context = context;
-        //    _jwtTokenHelper=jwtTokenHelper;
-        //}
+       
         // SignUp API endpoint
         [HttpPost("signup")]     
         public async Task<IActionResult> SignUp([FromForm] SignUpModel model)
@@ -48,10 +44,6 @@ namespace UserService.Controllers
                 return BadRequest(ModelState);
             Console.WriteLine(JsonConvert.SerializeObject(model));
 
-            Console.WriteLine(model.Name); 
-            Console.WriteLine(model.Password); 
-            Console.WriteLine(model.City);
-            Console.WriteLine("Aa gaya data ");
           //  Console.WriteLine(model.UserImage);
             // Check if a user with the same phone number already exists
            

@@ -76,8 +76,7 @@ namespace JobService.Controllers
         [HttpPost("Addcategory")]
         public async Task<ActionResult<Category>> PostCategory(CategoryDTO CategoryDto)
         {
-            _logger.LogInformation("Received a new job application request.");
-
+          
             //if (!ModelState.IsValid)
             //{
             //    _logger.LogWarning("Invalid model state for the reequest.");
@@ -114,8 +113,7 @@ namespace JobService.Controllers
             _context.Categories.Add(Category);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"Job application successfully saved with ID: {Category.Id}");
-
+           
             // Return the created entity
             return CreatedAtAction("GetCategory", new { id = Category.Id }, Category);
         }

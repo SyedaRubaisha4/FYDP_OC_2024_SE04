@@ -71,6 +71,7 @@ namespace JobPost_Service.Models
         // Timing column (for both ServicePost and JobPost)
         [StringLength(50)]
         public string? Timing { get; set; }
+        public string Type { get; set; }
     }
 
     // Enum for PostStatus with annotations

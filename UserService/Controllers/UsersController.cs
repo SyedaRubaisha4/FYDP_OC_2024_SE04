@@ -43,7 +43,6 @@ namespace UserService.Controllers
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
-
             var user = await _context.Users
                 .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
                 .FirstOrDefaultAsync();
@@ -65,19 +64,18 @@ namespace UserService.Controllers
             return Ok(user);
         }
 
-        [HttpPut("PutUser{id}")]
-        [Authorize]
-        public async Task<ActionResult<ApplicationUser>> UpdateUser(string id, UserUpdateDto user)
+        [HttpPut("UpdateUser/{id}")]
+        //[Authorize]
+        public async Task<ActionResult<ApplicationUser>> UpdateUser(string id, [FromForm] UserUpdateDto user)
         {
+            Console.WriteLine("Ma phnch gaya yaha \n \n \n\n tk !!!!!!!!!!!!!!!!!!!!!");
             var UpdateUser = await _context.Users
                 .Where(x => x.Id == id && x.Status == Status.Active.ToString())
                 .FirstOrDefaultAsync();
-
             if (UpdateUser == null)
             {
                 return NotFound("User not found or inactive.");
             }
-
             // Update fields
             UpdateUser.Name = user.Name;
         
@@ -86,26 +84,28 @@ namespace UserService.Controllers
             UpdateUser.Password = user.Password;
             UpdateUser.Cnic = user.Cnic;
             UpdateUser.City = user.City;
-            UpdateUser.DateofBirth = user.DateofBirth;
+            UpdateUser.Job = user.Job;
+          
+            UpdateUser.Experience = user.Experience;
+        //    UpdateUser.DateofBirth = user.DateofBirth;
             UpdateUser.Gender = user.Gender;
-
-            // Update Images (Only if new images are provided)
-            if (user.UserImage != null)
+            if (user.UserImageName != null)
             {
                 DeleteFile(UpdateUser.UserImageName);
-                UpdateUser.UserImageName = await SaveFileAsync(user.UserImage, "UserImages");
+                 UpdateUser.UserImageName = await SaveFileAsync(user.UserImageName, "UserImages");
             }
+           
 
-            if (user.CertificateImage != null)
+            if (user.CertificateImageName != null)
             {
                 DeleteFile(UpdateUser.CertificateImageName);
-                UpdateUser.CertificateImageName = await SaveFileAsync(user.CertificateImage, "UserCertificateImages");
+                UpdateUser.CertificateImageName = await SaveFileAsync(user.CertificateImageName, "UserCertificateImages");
             }
 
-            if (user.CnicImage != null)
+            if (user.CnicImageName != null)
             {
                 DeleteFile(UpdateUser.CnicImageName);
-                UpdateUser.CnicImageName = await SaveFileAsync(user.CnicImage, "UserCnicImages");
+                 UpdateUser.CnicImageName = await SaveFileAsync(user.CnicImageName, "UserCnicImages");
             }
 
             UpdateUser.ModifiedDate = DateTime.UtcNow;
@@ -121,7 +121,7 @@ namespace UserService.Controllers
         [HttpGet("GetUserData")]
         public async Task<UserGetDto> GetUserData()
         {
-            Console.WriteLine("hit hoi ha \n \n \n \n \n \n \n \n \n  ");
+            
             var authUser = new AuthUser(_contextAccessor.HttpContext.Request);
             var user = await _context.Users.Where(x => x.Id == authUser.Id).FirstOrDefaultAsync();
             var User = new UserGetDto
@@ -131,16 +131,13 @@ namespace UserService.Controllers
                 Password = user.Password,
                 Address = user.Address,
                 Cnic = user.Cnic,
-                Status = user.Status,
-                Role = user.Role,
                 Gender = user.Gender,
                 City = user.City,
                 CnicImageName = user.CnicImageName,
                 UserImageName = user.UserImageName,
                 CertificateImageName = user.CertificateImageName,
                 //DateofBirth = user.DateofBirth,
-                ResetToken = user.ResetToken,
-               // TokenExpiry = user.TokenExpiry,
+                // TokenExpiry = user.TokenExpiry,
                 Experience = user.Experience,
                 Job = user.Job,
                 //CreatedDate = user.CreatedDate,
