@@ -26,7 +26,7 @@ namespace UserService.Models.DTOs
         public string UserImageName { get; set; }
         public string CertificateImageName { get; set; }
         //signup
-       // public DateOnly DateofBirth { get; set; }
+        public DateOnly DateofBirth { get; set; }
         public string ResetToken { get; set; }
         //public DateTime? TokenExpiry { get; set; }
         public string Experience { get; set; }
