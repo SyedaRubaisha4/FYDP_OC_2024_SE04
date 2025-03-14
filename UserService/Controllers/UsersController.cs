@@ -39,8 +39,10 @@ namespace UserService.Controllers
             return users;
         }
 
-        [HttpGet("GetUsersById/{id}")]
+        [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
        // [Authorize]
+
+        //ghfghff
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
             var user = await _context.Users
