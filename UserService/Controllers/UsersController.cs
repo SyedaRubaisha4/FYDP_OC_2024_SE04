@@ -210,7 +210,36 @@ namespace UserService.Controllers
 
             return Ok();
         }
-          
+        [Authorize]
+        [HttpGet("GetUsersCount")]
+        public async Task<IActionResult> GetUsersAllCount()
+        {
+            var users= await _context.Users.Where(x=>x.Status==Status.Active.ToString()).CountAsync();
+            return Ok(users);
+        }
+        [Authorize]
+        [HttpGet("GetUsersWeeklyCount")]
+        public async Task<IActionResult> GetUsersWeeklyCount()
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+             var usersThisWeek = await _context.Users
+                .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfWeek)
+                .CountAsync(); 
+            return Ok(usersThisWeek);
+        }
+        [Authorize]
+        [HttpGet("GetUsersMonthlyCount")]
+        public async Task<IActionResult> GetUsersMonthlyCount()
+        {
+            var now = DateTime.UtcNow; var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisMonth = await _context.Users
+             .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfMonth)
+             .CountAsync();
+            return Ok(usersThisMonth);
+        }
+
 
         private static async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {

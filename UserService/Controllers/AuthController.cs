@@ -44,10 +44,12 @@ namespace UserService.Controllers
                 return BadRequest(ModelState);
             Console.WriteLine(JsonConvert.SerializeObject(model));
 
-          //  Console.WriteLine(model.UserImage);
-            // Check if a user with the same phone number already exists
-           
-            // Create the new user
+            var users = _context.Users.Where(x => x.PhoneNumber == model.PhoneNumber);
+            if (users!=null)
+            {
+                return BadRequest("User with same Phone number already exists");
+
+            }
             var user = new ApplicationUser
             {
                Name = model.Name, 

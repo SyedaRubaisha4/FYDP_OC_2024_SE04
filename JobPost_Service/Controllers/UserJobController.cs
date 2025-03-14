@@ -145,6 +145,19 @@ namespace JobPost_Service.Controllers
             }
             return Ok(userList);
         }
+
+        [HttpGet("GetUserJobCount")]
+        public async Task<IActionResult> GetUserJobCount(string Id)
+        {
+            var count =await _context.UserJob.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            return Ok(count);
+        }
+        [HttpGet("GetUserServiceCount")]
+        public async Task<IActionResult> GetUserServiceCount(string Id)
+        {
+            var count = await _context.UserService.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            return Ok(count);
+        }
     }
 
 }

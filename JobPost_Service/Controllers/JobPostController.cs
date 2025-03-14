@@ -7,6 +7,7 @@ using System.Text.Json;
 using SharedLibrary;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using JobPost_Service.Helper;
 
 namespace JobPost_Service.Controllers
 {
@@ -58,7 +59,6 @@ namespace JobPost_Service.Controllers
         [HttpPost]
         public async Task<ActionResult<JobPost>> CreateJobPost(JobPost jobPost)
         {
-            // Retrieve the user from in-memory cache
             if (!_memoryCache.TryGetValue("User", out PublishedUser user))
             {
                 return BadRequest("No user found in cache.");
@@ -66,11 +66,8 @@ namespace JobPost_Service.Controllers
 
 
             jobPost.UserId = user?.Id;
-            Console.WriteLine(jobPost.UserId);
-            //  jobPost.CategoryId = 1; // Default category ID
-            jobPost.Status = PostStatus.Pending; // Default status
+            jobPost.Status = Status.Active.ToString();
             jobPost.DatePosted = DateTime.UtcNow;
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(jobPost));
             _context.JobPosts.Add(jobPost);
             await _context.SaveChangesAsync();
 
@@ -128,6 +125,34 @@ namespace JobPost_Service.Controllers
         private bool JobPostExists(int id)
         {
             return _context.JobPosts.Any(e => e.Id == id);
+        }
+
+        [HttpGet("GetAllJobCount")]
+        public async Task<IActionResult> GetAllJobCount()
+        {
+            var jobs = await _context.JobPosts.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            return Ok(jobs);
+        }
+
+        [HttpGet("GetJobWeeklyCount")]
+        public async Task<IActionResult> GetJobWeeklyCount()
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisWeek = await _context.JobPosts
+               .Where(x => x.Status == Status.Active.ToString() && x.DatePosted >= startOfWeek)
+               .CountAsync();
+            return Ok(usersThisWeek);
+        }
+        [HttpGet("GetJobMonthlyCount")]
+        public async Task<IActionResult> GetJobMonthlyCount()
+        {
+            var now = DateTime.UtcNow; var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisMonth = await _context.JobPosts
+             .Where(x => x.Status == Status.Active.ToString() && x.DatePosted >= startOfMonth)
+             .CountAsync();
+            return Ok(usersThisMonth);
         }
     }
 }

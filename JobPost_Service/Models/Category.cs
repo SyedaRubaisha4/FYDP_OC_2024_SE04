@@ -8,6 +8,8 @@ namespace JobPost_Service.Models
         public string? Name { get; set; }
         public string? CategoryImageName { get; set; }
         public int CategoryJobs { get; set; }
+        public string Status { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         [NotMapped]
         public IFormFile? CategoryImage { get; set; }

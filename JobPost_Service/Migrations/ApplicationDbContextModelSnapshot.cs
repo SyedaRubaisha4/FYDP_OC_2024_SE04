@@ -42,7 +42,6 @@ namespace JobPost_Service.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DatePosted")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -87,8 +86,9 @@ namespace JobPost_Service.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Timing")
                         .HasMaxLength(50)
@@ -126,7 +126,14 @@ namespace JobPost_Service.Migrations
                     b.Property<int>("CategoryJobs")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -151,7 +158,6 @@ namespace JobPost_Service.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DatePosted")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -192,8 +198,9 @@ namespace JobPost_Service.Migrations
                     b.Property<DateTime>("PreferredDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Timing")
                         .HasMaxLength(50)
