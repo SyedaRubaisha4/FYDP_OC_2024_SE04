@@ -5,7 +5,7 @@
 namespace JobPost_Service.Migrations
 {
     /// <inheritdoc />
-    public partial class Type : Migration
+    public partial class abc : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobPost_Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250311155823_Type")]
-    partial class Type
+    [Migration("20250311190020_abc")]
+    partial class abc
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -220,34 +220,6 @@ namespace JobPost_Service.Migrations
                     b.ToTable("ServicePosts");
                 });
 
-            modelBuilder.Entity("JobPost_Service.Models.UserJob", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("JobId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserJob");
-                });
-
             modelBuilder.Entity("JobPost_Service.Models.UserService", b =>
                 {
                     b.Property<long>("Id")
@@ -274,6 +246,34 @@ namespace JobPost_Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserService");
+                });
+
+            modelBuilder.Entity("JobPost_Service.Models.UsersJob", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("JobId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UsersJob");
                 });
 
             modelBuilder.Entity("SharedLibrary.PublishedUser", b =>

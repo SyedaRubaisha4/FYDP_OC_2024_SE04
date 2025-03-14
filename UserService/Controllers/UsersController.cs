@@ -39,8 +39,8 @@ namespace UserService.Controllers
             return users;
         }
 
-        [HttpGet("GetUsersById{id}")]
-        [Authorize]
+        [HttpGet("GetUsersById/{id}")]
+       // [Authorize]
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
             var user = await _context.Users
