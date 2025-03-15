@@ -52,16 +52,15 @@ namespace UserService.Controllers
             }
 
             var cityCount = await _context.City.Where(x => x.Name == model.City).FirstOrDefaultAsync();
-            cityCount.UserCount = cityCount.UserCount + 1;
+            cityCount.UserCount += 1;
             _context.City.Update(cityCount);
-           
-
+          
             var user = new ApplicationUser
             {
-               Name = model.Name, 
-               Job=model.Job,
-               DateofBirth=DateOnly.Parse(model.DateofBirth),
-               Password=model.Password,
+                Name = model.Name, 
+                Job=model.Job,
+                DateofBirth=DateOnly.Parse(model.DateofBirth),
+                Password=model.Password,
                 Cnic = model.Cnic,
                 PhoneNumber = model.PhoneNumber,
                 Role = Role.User.ToString(),
@@ -70,10 +69,10 @@ namespace UserService.Controllers
                 ModifiedDate = null,
                 ResetToken = null,
                 TokenExpiry = null,
-                 City=model.City,
+                City=model.City,
                 Experience=null,
                 Gender=null,
-                 Address =null,
+                Address =null,
                 CertificateImageName=null,
                 CnicImageName = null,
 
@@ -84,21 +83,18 @@ namespace UserService.Controllers
             }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            //  var result;// = await _userManager.CreateAsync(user, model.Password);
             if (true)
-            {
-                // Retrieve the newly created user from the database
-                var createdUser = await _context.Users
-                                                .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
+            {               
+                var createdUser = await _context.Users .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
 
                 if (createdUser != null)
-                {
-                   
+                {                   
                     var publishedUser = new PublishedUser
                     {
                         Id = createdUser.Id,
                         Name = $"{createdUser.Name}",
-                        PhoneNumber = createdUser.PhoneNumber
+                        PhoneNumber = createdUser.PhoneNumber,
+                        Job=createdUser.Job
                     };
 
                     // Publish the data using SendUserAsync

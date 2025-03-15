@@ -10,7 +10,7 @@ namespace JobPost_Service.Data
 
         public DbSet<ServicePost> ServicePosts { get; set; }
         public DbSet<JobPost> JobPosts { get; set; }
-        public DbSet<PublishedUser> Users { get; set; }
+     //   public DbSet<PublishedUser> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserJob> UserJob { get; set; }
         public DbSet<UserService> UserService { get; set; }
