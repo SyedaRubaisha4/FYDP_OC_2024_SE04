@@ -25,7 +25,8 @@ namespace JobService.Controllers
         [HttpGet("AllCategories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            return await _context.Categories.ToListAsync();
+            var categories =await _context.Categories.Where(x => x.Status == Status.Active.ToString()).ToListAsync();
+            return categories;
         }
 
         // GET: api/Category/5
@@ -76,22 +77,13 @@ namespace JobService.Controllers
         [HttpPost("Addcategory")]
         public async Task<ActionResult<Category>> PostCategory(CategoryDTO CategoryDto)
         {
-          
-            //if (!ModelState.IsValid)
-            //{
-            //    _logger.LogWarning("Invalid model state for the reequest.");
-            //    return BadRequest(ModelState);
-            //}
-            Console.WriteLine("Received Payload:");
-            Console.WriteLine(JsonConvert.SerializeObject(CategoryDto));
-
-            // Map DTO to Entity
+   
             var Category = new Category
             {
                 Name = CategoryDto.Name,
                 Status=Status.Active.ToString(),
                 CreatedDate=DateTime.Now,
-                CategoryJobs = CategoryDto.CategoryJobs,
+                CategoryCount = 0,
 
             };
             if (CategoryDto.CategoryImage != null && CategoryDto.CategoryImage.Length > 0)
@@ -240,9 +232,7 @@ namespace JobService.Controllers
         {
             var Categorys = await _context.Categories.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(Categorys);
-        }
-
-        
+        }       
         [HttpGet("GetCategoryWeeklyCount")]
         public async Task<IActionResult> GetCategoryWeeklyCount()
         {
@@ -265,5 +255,13 @@ namespace JobService.Controllers
             return Ok(usersThisMonth);
         }
 
+        [HttpGet("CategoryCount")]
+        public async Task<IActionResult> CategoryCount(string Name)
+        {
+            var category= await _context.Categories.Where(x => x.Name == Name).FirstOrDefaultAsync();
+            category.CategoryCount = category.CategoryCount + 1;
+            _context.Categories.Update(category);
+            return Ok(category);
+        }
     }
 }

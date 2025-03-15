@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /JobPost_Service/JobPost_Service.csproj
+# Ignore Migrations folders
+**/Migrations/
+
