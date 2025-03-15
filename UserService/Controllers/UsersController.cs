@@ -39,8 +39,10 @@ namespace UserService.Controllers
             return users;
         }
 
-        [HttpGet("GetUsersById{id}")]
-        [Authorize]
+        [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
+       // [Authorize]
+
+        //ghfghff
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
             var user = await _context.Users
@@ -87,7 +89,7 @@ namespace UserService.Controllers
             UpdateUser.Job = user.Job;
           
             UpdateUser.Experience = user.Experience;
-        //    UpdateUser.DateofBirth = user.DateofBirth;
+           UpdateUser.DateofBirth = user.DateofBirth;
             UpdateUser.Gender = user.Gender;
             if (user.UserImageName != null)
             {
@@ -126,6 +128,7 @@ namespace UserService.Controllers
             var user = await _context.Users.Where(x => x.Id == authUser.Id).FirstOrDefaultAsync();
             var User = new UserGetDto
             {
+                UserImageName = user.UserImageName,
                 Name = user.Name,
                 PhoneNumber = user.PhoneNumber,
                 Password = user.Password,
@@ -134,25 +137,15 @@ namespace UserService.Controllers
                 Gender = user.Gender,
                 City = user.City,
                 CnicImageName = user.CnicImageName,
-                UserImageName = user.UserImageName,
                 CertificateImageName = user.CertificateImageName,
-                //DateofBirth = user.DateofBirth,
-                // TokenExpiry = user.TokenExpiry,
+                DateofBirth = user.DateofBirth,
                 Experience = user.Experience,
-                Job = user.Job,
-                //CreatedDate = user.CreatedDate,
-                //ModifiedDate = user.ModifiedDate,
-               
+                Job = user.Job,                
             };
 
 
             return User;
-        }
-        //[HttpPut("UpdateUserProfile")]
-        //public async Task<ActionResult> UpdateUserProfile(string id, UserUpdateDto user)
-        //{
-
-        //}
+        }   
         [HttpPost("AddUser")]
         [Authorize]
         public async Task<ActionResult<ApplicationUser>> AddUser(UserCreateDto UserCreateDto)
@@ -219,6 +212,37 @@ namespace UserService.Controllers
 
             return Ok();
         }
+        [Authorize]
+        [HttpGet("GetUsersCount")]
+        public async Task<IActionResult> GetUsersAllCount()
+        {
+            var users= await _context.Users.Where(x=>x.Status==Status.Active.ToString()).CountAsync();
+            return Ok(users);
+        }
+        [Authorize]
+        [HttpGet("GetUsersWeeklyCount")]
+        public async Task<IActionResult> GetUsersWeeklyCount()
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+             var usersThisWeek = await _context.Users
+                .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfWeek)
+                .CountAsync(); 
+            return Ok(usersThisWeek);
+        }
+        [Authorize]
+        [HttpGet("GetUsersMonthlyCount")]
+        public async Task<IActionResult> GetUsersMonthlyCount()
+        {
+            var now = DateTime.UtcNow; var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisMonth = await _context.Users
+             .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfMonth)
+             .CountAsync();
+            return Ok(usersThisMonth);
+        }
+
+
         private static async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
             if (file == null || file.Length == 0)

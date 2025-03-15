@@ -4,6 +4,8 @@ using JobPost_Service.Data;
 using JobPost_Service.Models;
 using Microsoft.Extensions.Caching.Memory;
 using SharedLibrary;
+using Microsoft.AspNetCore.Authorization;
+using JobPost_Service.Helper;
 
 namespace JobPost_Service.Controllers
 {
@@ -52,7 +54,7 @@ namespace JobPost_Service.Controllers
                 }
 
             servicePost.UserId = user .Id?? "123"; 
-            servicePost.Status = PostStatus.Pending; 
+            servicePost.Status = Status.Active.ToString(); 
             servicePost.DatePosted = DateTime.UtcNow; 
 
           
@@ -107,9 +109,41 @@ namespace JobPost_Service.Controllers
 
             return NoContent();
         }
+      
+        [HttpGet("GetAllServiceCount")]
+        public async Task<IActionResult> GetAllServiceCount()
+        {
+            var jobs = await _context.ServicePosts.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            return Ok(jobs);
+        }
+
+        
+        [HttpGet("GetServiceWeeklyCount")]
+        public async Task<IActionResult> GetServiceWeeklyCount()
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisWeek = await _context.ServicePosts
+               .Where(x => x.Status == Status.Active.ToString() && x.DatePosted >= startOfWeek)
+               .CountAsync();
+            return Ok(usersThisWeek);
+        }
+
+        [HttpGet("GetServiceMonthlyCount")]
+        public async Task<IActionResult> GetServiceMonthlyCount()
+        {
+            var now = DateTime.UtcNow; var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisMonth = await _context.ServicePosts
+             .Where(x => x.Status == Status.Active.ToString() && x.DatePosted >= startOfMonth)
+             .CountAsync();
+            return Ok(usersThisMonth);
+        }
         private bool ServicePostExists(int id)
         {
             return _context.ServicePosts.Any(e => e.Id == id);
         }    
+
+
     }
 }

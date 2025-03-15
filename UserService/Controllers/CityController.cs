@@ -23,14 +23,13 @@ namespace UserService.Controllers
             _context = context;
         }
 
-        // GET: api/City
         [HttpGet("GetAllCity")]
         public async Task<ActionResult<IEnumerable<City>>> GetCity()
         {
             return await _context.City.ToListAsync();
         }
 
-        // GET: api/City/5
+   
         [HttpGet("GetCityById/{id}")]
         public async Task<ActionResult<City>> GetCityById(long id)
         {
@@ -78,6 +77,7 @@ namespace UserService.Controllers
                     Name = City.Name,
                     CreatedDate = DateTime.UtcNow,
                     ModifiedDate = null,
+                    UserCount=0,
                     Status = Status.Active.ToString(),
                    
                 };
@@ -91,7 +91,6 @@ namespace UserService.Controllers
             }            
         }
 
-        // DELETE: api/City/5
         [HttpDelete("DeleteCity/{id}")]
         public async Task<IActionResult> DeleteCity(long id)
         {
@@ -108,7 +107,14 @@ namespace UserService.Controllers
 
             return Ok("City deleted successfully");
         }
-
+        [HttpDelete("CityCount")]
+        public async Task<IActionResult> CityCount(string Name)
+        {
+            var cityCount=await _context.City.Where(x=>x.Name==Name).FirstOrDefaultAsync();
+            cityCount.UserCount= cityCount.UserCount+1;
+            _context.City.Update(cityCount);
+            return Ok(cityCount);
+        }
         private bool CityExists(long id)
         {
             return _context.City.Any(e => e.Id == id);

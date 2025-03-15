@@ -1,5 +1,7 @@
 ﻿using JobPost_Service.Data;
+using JobPost_Service.Helper;
 using JobPost_Service.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +25,8 @@ namespace JobService.Controllers
         [HttpGet("AllCategories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            return await _context.Categories.ToListAsync();
+            var categories =await _context.Categories.Where(x => x.Status == Status.Active.ToString()).ToListAsync();
+            return categories;
         }
 
         // GET: api/Category/5
@@ -71,25 +74,16 @@ namespace JobService.Controllers
             return NoContent();
         }
 
-        // POST: api/Category
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Addcategory")]
         public async Task<ActionResult<Category>> PostCategory(CategoryDTO CategoryDto)
         {
-          
-            //if (!ModelState.IsValid)
-            //{
-            //    _logger.LogWarning("Invalid model state for the reequest.");
-            //    return BadRequest(ModelState);
-            //}
-            Console.WriteLine("Received Payload:");
-            Console.WriteLine(JsonConvert.SerializeObject(CategoryDto));
-
-            // Map DTO to Entity
+   
             var Category = new Category
             {
                 Name = CategoryDto.Name,
-                CategoryJobs = CategoryDto.CategoryJobs,
+                Status=Status.Active.ToString(),
+                CreatedDate=DateTime.Now,
+                CategoryCount = 0,
 
             };
             if (CategoryDto.CategoryImage != null && CategoryDto.CategoryImage.Length > 0)
@@ -109,6 +103,10 @@ namespace JobService.Controllers
                 Category.CategoryImageName = $"{uniqueFileName}";
 
             }
+            else
+            {
+                Category.CategoryImageName = null;
+            }
 
             // Add to database and save changes
             _context.Categories.Add(Category);
@@ -118,7 +116,7 @@ namespace JobService.Controllers
             // Return the created entity
             return CreatedAtAction("GetCategory", new { id = Category.Id }, Category);
         }
-        // DELETE: api/Category/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
@@ -228,6 +226,42 @@ namespace JobService.Controllers
                 return StatusCode(500, new { Error = "An error occurred.", Details = ex.Message });
             }
         }
+      
+        [HttpGet("GetAllCategoryCount")]
+        public async Task<IActionResult> GetAllCategoryCount()
+        {
+            var Categorys = await _context.Categories.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            return Ok(Categorys);
+        }       
+        [HttpGet("GetCategoryWeeklyCount")]
+        public async Task<IActionResult> GetCategoryWeeklyCount()
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisWeek = await _context.Categories
+               .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfWeek)
+               .CountAsync();
+            return Ok(usersThisWeek);
+        }
+      
+        [HttpGet("GetCategoryMonthlyCount")]
+        public async Task<IActionResult> GetCategoryMonthlyCount()
+        {
+            var now = DateTime.UtcNow; var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var usersThisMonth = await _context.Categories
+             .Where(x => x.Status == Status.Active.ToString() && x.CreatedDate >= startOfMonth)
+             .CountAsync();
+            return Ok(usersThisMonth);
+        }
 
+        [HttpGet("CategoryCount")]
+        public async Task<IActionResult> CategoryCount(string Name)
+        {
+            var category= await _context.Categories.Where(x => x.Name == Name).FirstOrDefaultAsync();
+            category.CategoryCount = category.CategoryCount + 1;
+            _context.Categories.Update(category);
+            return Ok(category);
+        }
     }
 }

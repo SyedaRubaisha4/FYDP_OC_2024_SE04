@@ -42,12 +42,20 @@ namespace UserService.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            Console.WriteLine(JsonConvert.SerializeObject(model));
+            //Console.WriteLine(JsonConvert.SerializeObject(model));
 
-          //  Console.WriteLine(model.UserImage);
-            // Check if a user with the same phone number already exists
+            var users = await  _context.Users.Where(x => x.PhoneNumber == model.PhoneNumber).FirstOrDefaultAsync();
+            
+            if(users!=null)
+            {
+                return BadRequest("User already existed");
+            }
+
+            var cityCount = await _context.City.Where(x => x.Name == model.City).FirstOrDefaultAsync();
+            cityCount.UserCount = cityCount.UserCount + 1;
+            _context.City.Update(cityCount);
            
-            // Create the new user
+
             var user = new ApplicationUser
             {
                Name = model.Name, 

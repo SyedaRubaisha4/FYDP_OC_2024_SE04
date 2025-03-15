@@ -20,13 +20,13 @@ namespace UserService.Models.DTOs
 
         public string Gender { get; set; }
         public string City { get; set; }
-      //  public DateOnly DateofBirth { get; set; }
+       public DateOnly DateofBirth { get; set; }
 
         public string Experience { get; set; }  // ✅ Added from JSON
         public string Job { get; set; }  
       
-        public IFormFile CnicImageName { get; set; }  
-        public IFormFile CertificateImageName { get; set; }  // ✅ JSON field
-        public IFormFile UserImageName { get; set; }  // ✅ JSON field
+        public IFormFile? CnicImageName { get; set; }  
+        public IFormFile? CertificateImageName { get; set; }  // ✅ JSON field
+        public IFormFile? UserImageName { get; set; }  // ✅ JSON field
     }
 }
