@@ -93,19 +93,26 @@ namespace JobPost_Service.Controllers
         }
        
         [HttpGet("GetApplicantsByJob/{jobId}")]
+        
         public async Task<IActionResult> GetApplicantsByJob(long jobId)
         {
             var userJobEntries = await _context.UserJob
                 .Where(uj => uj.JobId == jobId && uj.Status == "Active")
-                .Select(uj =>uj.UserId).ToListAsync();
+                .Select(uj => uj.UserId)
+                .Distinct() // Remove duplicate UserIds
+                .ToListAsync();
+
             var userList = new List<PublishedUser>();
-            foreach(var u in  userJobEntries)
+
+            foreach (var userId in userJobEntries)
             {
-                PublishedUser getuser = await _userRequestProducer. RequestUserById(u);
-                 userList.Add(getuser);
+                PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                userList.Add(getUser);
             }
+
             return Ok(userList);
         }
+
 
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
@@ -136,15 +143,21 @@ namespace JobPost_Service.Controllers
         {
             var userJobEntries = await _context.UserService
                 .Where(uj => uj.ServiceId == ServiceId && uj.Status == "Active")
-                .Select(uj => uj.UserId).ToListAsync();
+                .Select(uj => uj.UserId)
+                .Distinct() // Duplicate UserIds remove kar raha hai
+                .ToListAsync();
+
             var userList = new List<PublishedUser>();
-            foreach (var u in userJobEntries)
+
+            foreach (var userId in userJobEntries)
             {
-                PublishedUser getuser = await _userRequestProducer.RequestUserById(u);
-                userList.Add(getuser);
+                PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                userList.Add(getUser);
             }
+
             return Ok(userList);
         }
+
 
         [HttpGet("GetUserJobCount")]
         public async Task<IActionResult> GetUserJobCount(string Id)
