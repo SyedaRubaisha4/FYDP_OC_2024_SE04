@@ -242,7 +242,12 @@ namespace UserService.Controllers
             return Ok(usersThisMonth);
         }
 
-
+        [HttpGet("GetUsersFromJob")]
+        public async Task<IActionResult> GetUsersFromJob(string Job)
+        {
+            var getUsers = await _context.Users.Where(x => x.Job == Job && x.Status==Status.Active.ToString()).ToListAsync();
+            return Ok(getUsers);
+        }
         private static async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
             if (file == null || file.Length == 0)
