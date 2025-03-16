@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using SharedLibrary;
 
 namespace JobService.Controllers
 {
@@ -14,14 +16,15 @@ namespace JobService.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMemoryCache _memoryCache;
 
         private readonly ILogger<CategoryController> _logger;
-        public CategoryController(ApplicationDbContext context, ILogger<CategoryController> logger)
+        public CategoryController(ApplicationDbContext context, ILogger<CategoryController> logger, IMemoryCache memoryCache)
         {
             _context = context;
             _logger = logger;
+            _memoryCache= memoryCache;
         }
-        // GET: api/Category
         [HttpGet("AllCategories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
@@ -29,7 +32,6 @@ namespace JobService.Controllers
             return categories;
         }
 
-        // GET: api/Category/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
@@ -43,8 +45,6 @@ namespace JobService.Controllers
             return Category;
         }
 
-        // PUT: api/Category/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category Category)
         {
@@ -108,12 +108,8 @@ namespace JobService.Controllers
                 Category.CategoryImageName = null;
             }
 
-            // Add to database and save changes
             _context.Categories.Add(Category);
             await _context.SaveChangesAsync();
-
-           
-            // Return the created entity
             return CreatedAtAction("GetCategory", new { id = Category.Id }, Category);
         }
 
@@ -131,7 +127,6 @@ namespace JobService.Controllers
 
             return NoContent();
         }
-
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);
@@ -254,14 +249,6 @@ namespace JobService.Controllers
              .CountAsync();
             return Ok(usersThisMonth);
         }
-
-        [HttpGet("CategoryCount")]
-        public async Task<IActionResult> CategoryCount(string Name)
-        {
-            var category= await _context.Categories.Where(x => x.Name == Name).FirstOrDefaultAsync();
-            category.CategoryCount = category.CategoryCount + 1;
-            _context.Categories.Update(category);
-            return Ok(category);
-        }
+       
     }
 }
