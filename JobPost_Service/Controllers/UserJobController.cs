@@ -28,7 +28,8 @@ namespace JobPost_Service.Controllers
         [HttpPost("CreateUserjob")]
         public async Task<ActionResult<UserJob>> CreateUserJob(UserJobCreateDTO UserJobCreateDTO)
         {
-          
+           
+
             var UserJob = new UserJob
             {
                 UserId = UserJobCreateDTO.UserId,
@@ -114,7 +115,6 @@ namespace JobPost_Service.Controllers
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
         {
-          
 
             var UserService = new UserService
             {

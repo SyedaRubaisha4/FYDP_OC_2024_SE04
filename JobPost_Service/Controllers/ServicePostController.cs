@@ -55,6 +55,7 @@ namespace JobPost_Service.Controllers
 
             servicePost.UserId = user .Id?? "123"; 
             servicePost.Status = Status.Active.ToString(); 
+           
             servicePost.DatePosted = DateTime.UtcNow; 
 
           

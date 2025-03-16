@@ -8,7 +8,6 @@ using SharedLibrary;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using JobPost_Service.Helper;
-
 namespace JobPost_Service.Controllers
 {
     [Route("api/[controller]")]
@@ -63,10 +62,11 @@ namespace JobPost_Service.Controllers
             {
                 return BadRequest("No user found in cache.");
             }
-
+           
 
             jobPost.UserId = user?.Id;
             jobPost.Status = Status.Active.ToString();
+            jobPost.Type = "Job";
             jobPost.DatePosted = DateTime.UtcNow;
             _context.JobPosts.Add(jobPost);
             await _context.SaveChangesAsync();
