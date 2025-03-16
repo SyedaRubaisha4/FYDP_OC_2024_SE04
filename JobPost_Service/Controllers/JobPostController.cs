@@ -68,7 +68,7 @@ namespace JobPost_Service.Controllers
             jobPost.Status = Status.Active.ToString();
             jobPost.Type = "Job";
             jobPost.DatePosted = DateTime.UtcNow;
-            _context.JobPosts.Add(jobPost);
+             _context.JobPosts.Add(jobPost);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetJobPost", new { id = jobPost.Id }, jobPost);

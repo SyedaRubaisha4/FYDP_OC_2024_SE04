@@ -22,7 +22,6 @@ namespace JobPost_Service.Controllers
             _memoryCache = memoryCache;
         }
 
-        // GET: api/ServicePost
         [HttpGet]
         public async Task<IActionResult> GetServicePosts()
         {
@@ -30,7 +29,6 @@ namespace JobPost_Service.Controllers
             return Ok(servicePosts);
         }
 
-        // GET: api/ServicePost/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServicePost(int id)
         {
@@ -44,7 +42,6 @@ namespace JobPost_Service.Controllers
             return Ok(servicePost);
         }
 
-        // POST: api/ServicePost
         [HttpPost]
         public async Task<ActionResult<ServicePost>> CreateServicePost(ServicePost servicePost)
         {
@@ -55,17 +52,19 @@ namespace JobPost_Service.Controllers
 
             servicePost.UserId = user .Id?? "123"; 
             servicePost.Status = Status.Active.ToString(); 
+<<<<<<< HEAD
            
             servicePost.DatePosted = DateTime.UtcNow; 
 
           
+=======
+>>>>>>> 7616037fb3e53cae6b8aec3b06cd454c1434f533
             _context.ServicePosts.Add(servicePost);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetServicePost", new { id = servicePost.Id }, servicePost);
         }
 
-        // PUT: api/ServicePost/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateServicePost(int id, ServicePost servicePost)
         {
@@ -95,7 +94,6 @@ namespace JobPost_Service.Controllers
             return NoContent();
         }
 
-        // DELETE: api/ServicePost/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServicePost(int id)
         {
@@ -116,9 +114,7 @@ namespace JobPost_Service.Controllers
         {
             var jobs = await _context.ServicePosts.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(jobs);
-        }
-
-        
+        }        
         [HttpGet("GetServiceWeeklyCount")]
         public async Task<IActionResult> GetServiceWeeklyCount()
         {

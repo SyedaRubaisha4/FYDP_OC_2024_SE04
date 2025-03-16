@@ -11,4 +11,10 @@
         Admin,
         User
     }
+    public enum JobStatus
+    {
+        Applied,
+        Accepted,
+        Declined,
+    }
 }
