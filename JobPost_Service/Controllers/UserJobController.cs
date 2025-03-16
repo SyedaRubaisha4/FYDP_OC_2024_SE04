@@ -28,14 +28,10 @@ namespace JobPost_Service.Controllers
         [HttpPost("CreateUserjob")]
         public async Task<ActionResult<UserJob>> CreateUserJob(UserJobCreateDTO UserJobCreateDTO)
         {
-            if (!_memoryCache.TryGetValue("User", out PublishedUser user))
-            {
-                return BadRequest("No user found in cache.");
-            }
-
+          
             var UserJob = new UserJob
             {
-                UserId = user?.Id ?? "123",
+                UserId = UserJobCreateDTO.UserId,
                 JobId = UserJobCreateDTO.JobId,
                 CreatedDate = DateTime.Now,
                 Status = Status.Active.ToString(),
@@ -118,10 +114,7 @@ namespace JobPost_Service.Controllers
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
         {
-            //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
-            //{
-            //    return BadRequest("No user found in cache.");
-            //}
+          
 
             var UserService = new UserService
             {
@@ -176,6 +169,7 @@ namespace JobPost_Service.Controllers
         [HttpPost("AcceptedJobApplication")]
         public async Task<IActionResult> AcceptedJobApplication(AcceptedJobApplicationDTO AcceptedJobApplicationDTO)
         {
+           
             var acceptedJobApplication = new AcceptedJobApplication
             {
                 UserId = AcceptedJobApplicationDTO.UserId,
@@ -194,6 +188,7 @@ namespace JobPost_Service.Controllers
 
         public async Task<IActionResult> AcceptedServiceApplication(AcceptedServiceApplicationDTO AcceptedServiceApplicationDTO)
         {
+           
             var acceptedServiceApplication = new AcceptedServiceApplication
             {
                 UserId = AcceptedServiceApplicationDTO.UserId,
