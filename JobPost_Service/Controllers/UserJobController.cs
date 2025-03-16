@@ -196,11 +196,36 @@ namespace JobPost_Service.Controllers
                 return BadRequest("User not found ");
             }
             var userJobs = _context.UserJob.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.JobId).ToList();
-            var userJobList = new List<JobPost>();
+            var userJobList = new List<JobPostDTO>();
+              
             foreach (var job in userJobs)
             {
                 var Job = await _context.JobPosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
-                userJobList.Add(Job);
+                var jobPostDTO = new JobPostDTO
+                {
+                    JobType = Job.JobType,
+                    WorkplaceType = Job.WorkplaceType,
+                    Skills = Job.Skills,
+                    CompanyName = Job.CompanyName,
+                    Name = Job.Name,
+                    Description = Job.Description,
+                    Location = Job.Location,
+                    Address = Job.Address,
+                    PhoneNumber = Job.PhoneNumber,
+                    Email = Job.Email,
+                    Experience = Job.Experience,
+                    MinSalary = Job.MinSalary,
+                    MaxSalary = Job.MaxSalary,
+                    Status = Job.Status,
+                    DatePosted = Job.DatePosted,
+                    UserId = Job.UserId,
+                    CategoryId = Job.CategoryId,
+                    Timing = Job.Timing,
+                    Type = Job.Type
+                };
+
+                jobPostDTO.JobsStatus = await _context.UserJob.Where(x => x.UserId == UserId && x.JobId == job).Select(x=>x.JobsStatus).FirstOrDefaultAsync();
+                userJobList.Add(jobPostDTO);
             }
             return Ok(userJobList);
         }
@@ -212,11 +237,41 @@ namespace JobPost_Service.Controllers
                 return BadRequest("User not found ");
             }
             var userServices = _context.UserService.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.ServiceId).ToList();
-            var userServiceList = new List<ServicePost>();
+            var userServiceList = new List<JobServiceDTO>();
+
             foreach (var job in userServices)
             {
-                var service = await _context.ServicePosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
-                userServiceList.Add(service);
+                var service = await _context.ServicePosts
+                 .Where(x => x.Id == job && x.Status == Status.Active.ToString())
+                 .FirstOrDefaultAsync();
+
+               
+                    var jobServiceDTO = new JobServiceDTO
+                    {
+                        Name = service.Name,
+                        Description = service.Description,
+                        Location = service.Location,
+                        Address = service.Address,
+                        PhoneNumber = service.PhoneNumber,
+                        Email = service.Email,
+                        Experience = service.Experience,
+                        MinSalary = service.MinSalary,
+                        MaxSalary = service.MaxSalary,
+                        Status = service.Status,
+                        DatePosted = service.DatePosted,
+                        UserId = service.UserId,
+                        CategoryId = service.CategoryId,
+                        Timing = service.Timing,
+                        Type = service.Type,
+                        PreferredDate = service.PreferredDate,
+                        UrgencyLevel = service.UrgencyLevel
+                        
+                    };
+                
+                jobServiceDTO.ServiceStatus= await _context.UserService.Where(x => x.UserId == UserId && x.ServiceId == job).Select(x => x.ServiceStatus).FirstOrDefaultAsync();
+
+
+                userServiceList.Add(jobServiceDTO);
             }
             return Ok(userServiceList);
         }
