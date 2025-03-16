@@ -47,6 +47,8 @@ namespace UserService.Models.JWT
             // Extract claims
             var idClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
             var phoneClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "PhoneNumber")?.Value;
+            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+
 
             if (string.IsNullOrEmpty(idClaim) || string.IsNullOrEmpty(phoneClaim))
             {
@@ -57,7 +59,9 @@ namespace UserService.Models.JWT
             return new ApplicationUser
             {
                 Id = idClaim,
-                PhoneNumber = phoneClaim
+                PhoneNumber = phoneClaim,
+                Role= roleClaim
+
             };
         }
 
@@ -66,6 +70,7 @@ namespace UserService.Models.JWT
             List<Claim> claim = new List<Claim>();
             claim.Add(new Claim("Id", userDto.Id.ToString()));
             claim.Add(new Claim("PhoneNumber", userDto.PhoneNumber));
+            claim.Add(new Claim("Role", userDto.Role));
             return claim;
         }
     }

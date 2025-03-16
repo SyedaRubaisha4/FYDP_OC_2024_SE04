@@ -63,7 +63,7 @@ namespace UserService.Controllers
                 Password=model.Password,
                 Cnic = model.Cnic,
                 PhoneNumber = model.PhoneNumber,
-                Role = Role.User.ToString(),
+                Role = Role.Admin.ToString(),
                 CreatedDate = DateTime.UtcNow,
                 Status = Status.Active.ToString(),
                 ModifiedDate = null,

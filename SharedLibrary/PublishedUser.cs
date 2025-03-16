@@ -18,6 +18,8 @@ namespace SharedLibrary
         public string? Experience { get; set; }
         public string? Job { get; set; }
         public string? UserImage { get; set; }
+        public string? Status { get; set; }
+        public string? Role { get; set; }
 
     }
 }
