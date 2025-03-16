@@ -3,6 +3,7 @@ using JobPost_Service.Helper;
 using JobPost_Service.Models;
 using JobPost_Service.Models.DTOs;
 using JobPost_Service.RabbitMQ;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -170,6 +171,41 @@ namespace JobPost_Service.Controllers
         {
             var count = await _context.UserService.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(count);
+        }
+       
+        [HttpPost("AcceptedJobApplication")]
+        public async Task<IActionResult> AcceptedJobApplication(AcceptedJobApplicationDTO AcceptedJobApplicationDTO)
+        {
+            var acceptedJobApplication = new AcceptedJobApplication
+            {
+                UserId = AcceptedJobApplicationDTO.UserId,
+                ApplicantId = AcceptedJobApplicationDTO.ApplicantId,
+                JobId = AcceptedJobApplicationDTO.JobId,
+                Status = Status.Active.ToString(),
+                CreatedDate = DateTime.UtcNow,
+              
+            };
+            _context.AcceptedJobApplication.Add(acceptedJobApplication);
+            await _context.SaveChangesAsync();
+            return Ok(acceptedJobApplication);
+        }
+       
+        [HttpPost("AcceptedServiceApplication")]
+
+        public async Task<IActionResult> AcceptedServiceApplication(AcceptedServiceApplicationDTO AcceptedServiceApplicationDTO)
+        {
+            var acceptedServiceApplication = new AcceptedServiceApplication
+            {
+                UserId = AcceptedServiceApplicationDTO.UserId,
+                ApplicantId = AcceptedServiceApplicationDTO.ApplicantId,
+                ServiceId = AcceptedServiceApplicationDTO.ServiceId,
+                Status = Status.Active.ToString(),
+                CreatedDate = DateTime.UtcNow,
+              
+            };
+            _context.AcceptedServiceApplication.Add(acceptedServiceApplication);
+            await _context.SaveChangesAsync();
+            return Ok(acceptedServiceApplication);
         }
     }
 

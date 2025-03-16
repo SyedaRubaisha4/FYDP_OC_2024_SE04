@@ -14,6 +14,8 @@ namespace JobPost_Service.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserJob> UserJob { get; set; }
         public DbSet<UserService> UserService { get; set; }
+        public DbSet<AcceptedJobApplication> AcceptedJobApplication { get; set; }
+        public DbSet<AcceptedServiceApplication> AcceptedServiceApplication { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
