@@ -57,6 +57,7 @@ namespace UserService.Controllers
                 UserImage=user.UserImageName,
                 Job=user.Job,
                 City=user.Job,
+                Role=user.Role,
             };
             await _userProducer.PublishUser(publishedUser);
             if (user == null)
