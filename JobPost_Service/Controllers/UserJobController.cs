@@ -22,53 +22,29 @@ namespace JobPost_Service.Controllers
         {
             _context = context;
             _memoryCache = memoryCache;
-            _userRequestProducer= UserRequestProducer;
+            _userRequestProducer = UserRequestProducer;
         }
 
         [HttpPost("CreateUserjob")]
         public async Task<ActionResult<UserJob>> CreateUserJob(UserJobCreateDTO UserJobCreateDTO)
         {
-          
+           
+
             var UserJob = new UserJob
             {
                 UserId = UserJobCreateDTO.UserId,
                 JobId = UserJobCreateDTO.JobId,
                 CreatedDate = DateTime.Now,
                 Status = Status.Active.ToString(),
-                ModifiedDate = null
+                JobsStatus = JobStatus.Applied.ToString()
             };
-            if (UserJob.JobId != null) 
+            if (UserJob.JobId != null)
             {
                 _context.UserJob.Add(UserJob);
                 await _context.SaveChangesAsync();
                 return Ok(UserJob);
             }
             return BadRequest("JobId is null");
-        }
-        [HttpPut("UpdateUserjob/{id}")]
-        public async Task<ActionResult<UserJob>> UpdateUserJob(UserJobUpdateDTO UserJobUpdateDTO)
-        {
-
-            var userjob = await _context.UserJob.FindAsync(UserJobUpdateDTO.Id);
-            if (UserJobUpdateDTO.Id != null)
-            {
-
-
-                userjob.UserId = UserJobUpdateDTO.UserId;
-                userjob.JobId = UserJobUpdateDTO.JobId;
-                //  userjob.CreatedDate = UserJobUpdateDTO.CreatedDate;
-
-                userjob.ModifiedDate = DateTime.Now;
-
-                _context.UserJob.Update(userjob);
-                _context.SaveChanges();
-                return Ok(userjob);
-
-            }
-            else
-            {
-                return BadRequest("UserJob id is null");
-            }
         }
         [HttpDelete("DeleteUserJob/{id}")]
         public async Task<IActionResult> Deleteuser(long Id)
@@ -88,33 +64,34 @@ namespace JobPost_Service.Controllers
 
             }
         }
-       
+
         [HttpGet("GetApplicantsByJob/{jobId}")]
-        
-        public async Task<IActionResult> GetApplicantsByJob(long jobId)
+
+        public async Task<IActionResult> GetApplicantsByJob(long jobId, string UserId)
         {
             var userJobEntries = await _context.UserJob
                 .Where(uj => uj.JobId == jobId && uj.Status == "Active")
                 .Select(uj => uj.UserId)
-                .Distinct() // Remove duplicate UserIds
+                .Distinct()
                 .ToListAsync();
 
             var userList = new List<PublishedUser>();
-
             foreach (var userId in userJobEntries)
             {
                 PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                getUser.IsApplied = _context.AcceptedJobApplication.Any(x => x.ApplicantId == userId && x.JobId == jobId && x.UserId == UserId);
                 userList.Add(getUser);
             }
 
             return Ok(userList);
         }
-
-
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
         {
-          
+            //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+            //{
+            //    return BadRequest("No user found in cache.");
+            //}
 
             var UserService = new UserService
             {
@@ -122,7 +99,7 @@ namespace JobPost_Service.Controllers
                 ServiceId = UserServiceCreateDTO.ServiceId,
                 CreatedDate = DateTime.Now,
                 Status = Status.Active.ToString(),
-                ModifiedDate = null
+                ServiceStatus = JobStatus.Applied.ToString()
             };
             if (UserService.ServiceId != null)
             {
@@ -133,12 +110,12 @@ namespace JobPost_Service.Controllers
             return BadRequest("ServiceId is null");
         }
         [HttpGet("GetApplicantsByService/{ServiceId}")]
-        public async Task<IActionResult> GetApplicantsByService(long ServiceId)
+        public async Task<IActionResult> GetApplicantsByService(long ServiceId, string UserId)
         {
             var userJobEntries = await _context.UserService
                 .Where(uj => uj.ServiceId == ServiceId && uj.Status == "Active")
                 .Select(uj => uj.UserId)
-                .Distinct() // Duplicate UserIds remove kar raha hai
+                .Distinct()
                 .ToListAsync();
 
             var userList = new List<PublishedUser>();
@@ -146,6 +123,8 @@ namespace JobPost_Service.Controllers
             foreach (var userId in userJobEntries)
             {
                 PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                getUser.IsApplied = _context.AcceptedServiceApplication.Any(x => x.ApplicantId == userId && x.ServiceId == ServiceId && x.UserId == UserId);
+
                 userList.Add(getUser);
             }
 
@@ -156,7 +135,7 @@ namespace JobPost_Service.Controllers
         [HttpGet("GetUserJobCount")]
         public async Task<IActionResult> GetUserJobCount(string Id)
         {
-            var count =await _context.UserJob.Where(x => x.Status == Status.Active.ToString()).CountAsync();
+            var count = await _context.UserJob.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(count);
         }
         [HttpGet("GetUserServiceCount")]
@@ -165,11 +144,10 @@ namespace JobPost_Service.Controllers
             var count = await _context.UserService.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(count);
         }
-       
+
         [HttpPost("AcceptedJobApplication")]
         public async Task<IActionResult> AcceptedJobApplication(AcceptedJobApplicationDTO AcceptedJobApplicationDTO)
         {
-           
             var acceptedJobApplication = new AcceptedJobApplication
             {
                 UserId = AcceptedJobApplicationDTO.UserId,
@@ -177,18 +155,22 @@ namespace JobPost_Service.Controllers
                 JobId = AcceptedJobApplicationDTO.JobId,
                 Status = Status.Active.ToString(),
                 CreatedDate = DateTime.UtcNow,
-              
+
             };
+
             _context.AcceptedJobApplication.Add(acceptedJobApplication);
+            var job = _context.UserJob.Where(x => x.UserId == acceptedJobApplication.UserId && x.JobId == AcceptedJobApplicationDTO.JobId).FirstOrDefault();
+            job.JobsStatus = AcceptedJobApplicationDTO.JobsStatus;
+            _context.UserJob.Update(job);
             await _context.SaveChangesAsync();
+
             return Ok(acceptedJobApplication);
         }
-       
+
         [HttpPost("AcceptedServiceApplication")]
 
         public async Task<IActionResult> AcceptedServiceApplication(AcceptedServiceApplicationDTO AcceptedServiceApplicationDTO)
         {
-           
             var acceptedServiceApplication = new AcceptedServiceApplication
             {
                 UserId = AcceptedServiceApplicationDTO.UserId,
@@ -196,11 +178,47 @@ namespace JobPost_Service.Controllers
                 ServiceId = AcceptedServiceApplicationDTO.ServiceId,
                 Status = Status.Active.ToString(),
                 CreatedDate = DateTime.UtcNow,
-              
+
             };
             _context.AcceptedServiceApplication.Add(acceptedServiceApplication);
+            var service = await _context.UserService.Where(x => x.ServiceId == AcceptedServiceApplicationDTO.ServiceId && x.UserId == AcceptedServiceApplicationDTO.UserId).FirstOrDefaultAsync();
+            service.ServiceStatus = AcceptedServiceApplicationDTO.ServiceStatus;
+            _context.UserService.Update(service);
             await _context.SaveChangesAsync();
             return Ok(acceptedServiceApplication);
+        }
+
+        [HttpGet("GetUserAppliedJobs")]
+        public async Task<IActionResult> GetUserAppliedJobs(string UserId)
+        {
+            if (UserId == null)
+            {
+                return BadRequest("User not found ");
+            }
+            var userJobs = _context.UserJob.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.JobId).ToList();
+            var userJobList = new List<JobPost>();
+            foreach (var job in userJobs)
+            {
+                var Job = await _context.JobPosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
+                userJobList.Add(Job);
+            }
+            return Ok(userJobList);
+        }
+        [HttpGet("GetUserAppliedService")]
+        public async Task<IActionResult> GetUserAppliedService(string UserId)
+        {
+            if (UserId == null)
+            {
+                return BadRequest("User not found ");
+            }
+            var userServices = _context.UserService.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.ServiceId).ToList();
+            var userServiceList = new List<ServicePost>();
+            foreach (var job in userServices)
+            {
+                var service = await _context.ServicePosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
+                userServiceList.Add(service);
+            }
+            return Ok(userServiceList);
         }
     }
 
