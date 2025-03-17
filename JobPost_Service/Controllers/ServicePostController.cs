@@ -52,13 +52,12 @@ namespace JobPost_Service.Controllers
 
             servicePost.UserId = user .Id?? "123"; 
             servicePost.Status = Status.Active.ToString(); 
-<<<<<<< HEAD
+
            
             servicePost.DatePosted = DateTime.UtcNow; 
 
           
-=======
->>>>>>> 7616037fb3e53cae6b8aec3b06cd454c1434f533
+
             _context.ServicePosts.Add(servicePost);
             await _context.SaveChangesAsync();
 
