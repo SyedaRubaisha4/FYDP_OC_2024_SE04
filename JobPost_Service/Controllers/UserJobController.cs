@@ -3,6 +3,8 @@ using JobPost_Service.Helper;
 using JobPost_Service.Models;
 using JobPost_Service.Models.DTOs;
 using JobPost_Service.RabbitMQ;
+using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +20,13 @@ namespace JobPost_Service.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMemoryCache _memoryCache;
         private readonly UserRequestProducer _userRequestProducer;
-        public UserJobController(ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public UserJobController(IPublishEndpoint publishEndpoint,ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
         {
             _context = context;
             _memoryCache = memoryCache;
             _userRequestProducer = UserRequestProducer;
+            _publishEndpoint= publishEndpoint;
         }
 
         [HttpPost("CreateUserjob")]
@@ -156,7 +160,6 @@ namespace JobPost_Service.Controllers
                 JobId = AcceptedJobApplicationDTO.JobId,
                 Status = Status.Active.ToString(),
                 CreatedDate = DateTime.UtcNow,
-
             };
 
             _context.AcceptedJobApplication.Add(acceptedJobApplication);
@@ -164,6 +167,13 @@ namespace JobPost_Service.Controllers
             job.JobsStatus = AcceptedJobApplicationDTO.JobsStatus;
             _context.UserJob.Update(job);
             await _context.SaveChangesAsync();
+            await _publishEndpoint.Publish(new AcceptedJobNotificationEvent
+            {
+                UserId = acceptedJobApplication.UserId,
+                ApplicantId = acceptedJobApplication.ApplicantId,
+                JobId = acceptedJobApplication.JobId,
+                JobStatus = AcceptedJobApplicationDTO.JobsStatus,
+            });
 
             return Ok(acceptedJobApplication);
         }

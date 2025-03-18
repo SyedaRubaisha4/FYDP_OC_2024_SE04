@@ -49,6 +49,8 @@ builder.Services.AddMassTransit(x =>
 // Register UserConsumer for dependency injection
 builder.Services.AddScoped<IConsumer<PublishedUser>, UserConsumer>();
 
+//builder.Services.AddScoped<IUserProducer, UserProducer>();
+
 builder.Services.AddScoped<UserRequestProducer>();
 
 // User Service for the storage of data

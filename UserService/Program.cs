@@ -16,37 +16,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));  // Set your connection string
 
 
-// Add MassTransit and RabbitMQ
-//builder.Services.AddMassTransit(x =>
-//{
-//    x.UsingRabbitMq((context, cfg) =>
-//    {
-//        cfg.Host("rabbitmq://localhost", h =>
-//        {
-//            h.Username("guest");  // Default RabbitMQ username
-//            h.Password("guest");  // Default RabbitMQ password
-//        });
-
-//        // Configure a Fanout Exchange
-//        cfg.Message<PublishedUser>(configTopology =>
-//        {
-//            configTopology.SetEntityName("user-exchange"); // Set the exchange name
-//        });
-
-//        cfg.Publish<PublishedUser>(publishConfig =>
-//        {
-//            publishConfig.ExchangeType = RabbitMQ.Client.ExchangeType.Fanout; ; // Use "fanout" for broadcasting to multiple queues
-//        });
-//    });
-//});
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<UserRequestConsumer>(); // ✅ Register the consumer
-
+    x.AddConsumer<UserRequestConsumer>(); 
+    x.AddConsumer<GetUserByIdConsumer>();
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("rabbitmq://localhost", h =>
@@ -58,6 +35,10 @@ builder.Services.AddMassTransit(x =>
         cfg.ReceiveEndpoint("user-service-queue", e =>
         {
             e.ConfigureConsumer<UserRequestConsumer>(context);
+        });
+        cfg.ReceiveEndpoint("GetUserByID-service-queue", e =>
+        {
+            e.ConfigureConsumer<GetUserByIdConsumer>(context);
         });
     });
 });
