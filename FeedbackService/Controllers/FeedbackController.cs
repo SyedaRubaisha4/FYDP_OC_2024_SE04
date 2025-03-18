@@ -7,6 +7,7 @@ using SharedLibrary;
 using Microsoft.Extensions.Caching.Memory;
 using FeedbackService.Data;
 using Microsoft.EntityFrameworkCore;
+using FeedbackService.RabbitMQ;
 
 namespace FeedbackService.Controllers
 {
@@ -16,11 +17,13 @@ namespace FeedbackService.Controllers
     {
        private readonly IMemoryCache _memoryCache;
         private readonly ApplicationDbContext _context;
-        public FeedbackController( IMemoryCache memoryCache, ApplicationDbContext context)
+        private readonly UserRequestProducer _userRequestProducer;
+        public FeedbackController( IMemoryCache memoryCache, ApplicationDbContext context, UserRequestProducer UserRequestProducer)
         {
            
             _memoryCache = memoryCache;
             _context = context;
+            _userRequestProducer = UserRequestProducer;
         }
 
         [HttpGet("GetAllFeedback")]
@@ -41,11 +44,31 @@ namespace FeedbackService.Controllers
         [HttpGet("TargetFeedback/{targetId}")]
         public async Task<IActionResult> GetFeedbackByTargetIdAsync(string targetId)
         {
-            var f= await _context.Feedbacks
+            var feedbacks = await _context.Feedbacks
                 .Where(f => f.TargetID == targetId)
                 .ToListAsync();
-            return Ok(f);
+
+            var feedbackList = new List<object>();
+
+            foreach (var feedback in feedbacks)
+            {
+                PublishedUser senderUser = await _userRequestProducer.RequestUserById(feedback.SenderID);
+
+                feedbackList.Add(new
+                {
+                    feedback.Id,
+                    feedback.Comment,
+                    feedback.Rating,
+                    feedback.Status,
+                    feedback.CreatedDate,
+                    feedback.ModifiedDate,
+                    Sender = senderUser != null ? new { senderUser.Id, senderUser.Name } : null
+                });
+            }
+
+            return Ok(feedbackList);
         }
+
 
         [HttpGet("SenderFeedback/{senderId}")]
         public async Task<IActionResult> GetFeedbackBySenderIdAsync(string senderId)
