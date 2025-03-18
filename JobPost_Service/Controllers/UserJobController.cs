@@ -28,7 +28,7 @@ namespace JobPost_Service.Controllers
         [HttpPost("CreateUserjob")]
         public async Task<ActionResult<UserJob>> CreateUserJob(UserJobCreateDTO UserJobCreateDTO)
         {
-           
+
 
             var UserJob = new UserJob
             {
@@ -65,8 +65,9 @@ namespace JobPost_Service.Controllers
             }
         }
 
-
         [HttpGet("GetApplicantsByJob/{jobId}")]
+
+      
 
         public async Task<IActionResult> GetApplicantsByJob(long jobId)
         {
@@ -87,13 +88,15 @@ namespace JobPost_Service.Controllers
             return Ok(userList);
         }
 
-        
-
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
         {
+            //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+            //{
+            //    return BadRequest("No user found in cache.");
+            //}
 
-              var UserService = new UserService
+            var UserService = new UserService
             {
                 UserId = UserServiceCreateDTO.UserId,
                 ServiceId = UserServiceCreateDTO.ServiceId,
@@ -186,43 +189,16 @@ namespace JobPost_Service.Controllers
             return Ok(acceptedServiceApplication);
         }
 
-        //[HttpGet("GetUserAppliedJobs")]
         [HttpGet("GetUserAppliedJobs")]
         public async Task<IActionResult> GetUserAppliedJobs(string UserId)
         {
-            Console.WriteLine("🔹 Entered API: GetUserAppliedJobs");
-            Console.WriteLine($"🔹 Received UserId: {UserId}"); // ✅ Log UserId
-
-            if (string.IsNullOrEmpty(UserId))
+            if (UserId == null)
             {
-                Console.WriteLine("❌ UserId is null or empty!");
-                return BadRequest("User not found");
+                return BadRequest("User not found ");
             }
-<<<<<<< HEAD
-
-            var userJobs = _context.UserJob
-                .Where(x => x.UserId == UserId && x.Status == Status.Active.ToString())
-                .Select(x => x.JobId)
-                .ToList();
-
-            Console.WriteLine($"🔹 Found {userJobs.Count} jobs for UserId: {UserId}"); // ✅ Log number of jobs
-
-            var userJobList = new List<JobPost>();
-
-            foreach (var job in userJobs)
-            {
-                var Job = await _context.JobPosts
-                    .Where(x => x.Id == job && x.Status == Status.Active.ToString())
-                    .FirstOrDefaultAsync();
-
-                if (Job != null)
-                {
-                    userJobList.Add(Job);
-                }
-=======
             var userJobs = _context.UserJob.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.JobId).ToList();
             var userJobList = new List<JobPostDTO>();
-              
+
             foreach (var job in userJobs)
             {
                 var Job = await _context.JobPosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
@@ -249,15 +225,11 @@ namespace JobPost_Service.Controllers
                     Type = Job.Type
                 };
 
-                jobPostDTO.JobsStatus = await _context.UserJob.Where(x => x.UserId == UserId && x.JobId == job).Select(x=>x.JobsStatus).FirstOrDefaultAsync();
+                jobPostDTO.JobsStatus = await _context.UserJob.Where(x => x.UserId == UserId && x.JobId == job).Select(x => x.JobsStatus).FirstOrDefaultAsync();
                 userJobList.Add(jobPostDTO);
->>>>>>> f1aaf0f4115e36f7873ade0e80ba6517e0ca3642
             }
-
-            Console.WriteLine($"🔹 Returning {userJobList.Count} jobs"); // ✅ Log number of jobs returned
             return Ok(userJobList);
         }
-
         [HttpGet("GetUserAppliedService")]
         public async Task<IActionResult> GetUserAppliedService(string UserId)
         {
@@ -274,30 +246,30 @@ namespace JobPost_Service.Controllers
                  .Where(x => x.Id == job && x.Status == Status.Active.ToString())
                  .FirstOrDefaultAsync();
 
-               
-                    var jobServiceDTO = new JobServiceDTO
-                    {
-                        Name = service.Name,
-                        Description = service.Description,
-                        Location = service.Location,
-                        Address = service.Address,
-                        PhoneNumber = service.PhoneNumber,
-                        Email = service.Email,
-                        Experience = service.Experience,
-                        MinSalary = service.MinSalary,
-                        MaxSalary = service.MaxSalary,
-                        Status = service.Status,
-                        DatePosted = service.DatePosted,
-                        UserId = service.UserId,
-                        CategoryId = service.CategoryId,
-                        Timing = service.Timing,
-                        Type = service.Type,
-                        PreferredDate = service.PreferredDate,
-                        UrgencyLevel = service.UrgencyLevel
-                        
-                    };
-                
-                jobServiceDTO.ServiceStatus= await _context.UserService.Where(x => x.UserId == UserId && x.ServiceId == job).Select(x => x.ServiceStatus).FirstOrDefaultAsync();
+
+                var jobServiceDTO = new JobServiceDTO
+                {
+                    Name = service.Name,
+                    Description = service.Description,
+                    Location = service.Location,
+                    Address = service.Address,
+                    PhoneNumber = service.PhoneNumber,
+                    Email = service.Email,
+                    Experience = service.Experience,
+                    MinSalary = service.MinSalary,
+                    MaxSalary = service.MaxSalary,
+                    Status = service.Status,
+                    DatePosted = service.DatePosted,
+                    UserId = service.UserId,
+                    CategoryId = service.CategoryId,
+                    Timing = service.Timing,
+                    Type = service.Type,
+                    PreferredDate = service.PreferredDate,
+                    UrgencyLevel = service.UrgencyLevel
+
+                };
+
+                jobServiceDTO.ServiceStatus = await _context.UserService.Where(x => x.UserId == UserId && x.ServiceId == job).Select(x => x.ServiceStatus).FirstOrDefaultAsync();
 
 
                 userServiceList.Add(jobServiceDTO);

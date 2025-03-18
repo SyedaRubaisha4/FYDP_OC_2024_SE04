@@ -3,6 +3,8 @@ using FeedbackService.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using SharedLibrary;
+using RabbitMQ.Client;
+using FeedbackService.RabbitMQ;
 
 namespace FeedbackService
 {
@@ -28,7 +30,8 @@ namespace FeedbackService
             // Add MassTransit and RabbitMQ
             builder.Services.AddMassTransit(x =>
             {
-                x.AddConsumer<UserConsumer>();  // Register the consumer
+                x.AddConsumer<UserConsumer>();
+                x.AddRequestClient<UserRequestMessage>(new Uri("queue:user-service-queue"));
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -38,22 +41,23 @@ namespace FeedbackService
                         h.Password("guest");
                     });
 
-                    // Set up the consumer with the exchange binding
-                    cfg.ReceiveEndpoint("user-feedback-consumer-queue", e =>
+                    cfg.Publish<PublishedUser>(p =>
+                    {
+                        p.ExchangeType = ExchangeType.Fanout;  // ? Corrected Binding
+                    });
+
+                    cfg.ReceiveEndpoint("user-consumer-queue", e =>
                     {
                         e.ConfigureConsumer<UserConsumer>(context);
-
-                        // Bind to the "user-exchange" using message topology
-                        e.Bind("user-exchange", binding =>
-                        {
-                            binding.ExchangeType = RabbitMQ.Client.ExchangeType.Fanout;  // Use Fanout exchange type
-                        });
                     });
                 });
             });
 
+
             // Register UserConsumer for dependency injection
             builder.Services.AddScoped<IConsumer<PublishedUser>, UserConsumer>();
+
+            builder.Services.AddScoped<UserRequestProducer>();
 
             // User Service for the storage of data
             // Add Memory Cache to the container
