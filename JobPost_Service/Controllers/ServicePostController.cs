@@ -29,7 +29,27 @@ namespace JobPost_Service.Controllers
             _userRequestProducer = UserRequestProducer;
             _publishEndpoint = publishEndpoint;
         }
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetServicePostsByUser(string userId)
+        {
+            var servicePosts = await _context.ServicePosts
+                .Where(j => j.UserId == userId)
+                .ToListAsync();
 
+            if (servicePosts == null || servicePosts.Count == 0)
+            {
+                return NotFound("No job posts found for this user.");
+            }
+
+            // Fetch only user image from User Service
+            PublishedUser user = await _userRequestProducer.RequestUserById(userId);
+            var result = new
+            {
+                UserImage = user.UserImage, // Only return profile image
+                Jobs = servicePosts
+            };
+            return Ok(result);
+        }
         [HttpGet]
         public async Task<IActionResult> GetServicePosts()
         {
