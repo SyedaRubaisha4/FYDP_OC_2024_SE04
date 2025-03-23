@@ -1,6 +1,9 @@
 ﻿using JobPost_Service.Data;
 using JobPost_Service.Helper;
 using JobPost_Service.Models;
+using JobPost_Service.RabbitMQ;
+using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +20,17 @@ namespace JobService.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMemoryCache _memoryCache;
+        private readonly UserRequestProducer _userRequestProducer;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         private readonly ILogger<CategoryController> _logger;
-        public CategoryController(ApplicationDbContext context, ILogger<CategoryController> logger, IMemoryCache memoryCache)
+        public CategoryController(IPublishEndpoint publishEndpoint,ApplicationDbContext context, ILogger<CategoryController> logger, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
         {
             _context = context;
             _logger = logger;
             _memoryCache= memoryCache;
+            _userRequestProducer = UserRequestProducer;
+            _publishEndpoint = publishEndpoint;
         }
         [HttpGet("AllCategories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
@@ -131,6 +138,7 @@ namespace JobService.Controllers
         {
             return _context.Categories.Any(e => e.Id == id);
         }
+     //   [HttpGet("{id}/posts")]
         [HttpGet("{id}/posts")]
         public async Task<IActionResult> GetJobsAndServicesByCategory(int id)
         {
@@ -155,7 +163,8 @@ namespace JobService.Controllers
                         j.Experience,
                         j.MinSalary,
                         j.MaxSalary,
-                        j.CategoryId
+                        j.CategoryId,
+                        j.UserId // Add UserId for fetching profile image
                     })
                     .ToListAsync();
 
@@ -169,11 +178,11 @@ namespace JobService.Controllers
                         s.Description,
                         s.DatePosted,
                         s.Location,
-
                         s.Address,
                         s.MinSalary,
                         s.MaxSalary,
-                        s.CategoryId
+                        s.CategoryId,
+                        s.UserId // Add UserId for fetching profile image
                     })
                     .ToListAsync();
 
@@ -182,10 +191,64 @@ namespace JobService.Controllers
                     return NotFound(new { Message = "No jobs or services found for this category." });
                 }
 
+                // Get unique user IDs from jobs and services
+                var userIds = jobs.Select(j => j.UserId)
+                                  .Union(services.Select(s => s.UserId))
+                                  .Distinct()
+                                  .ToList();
+
+                // Fetch user images from User Service
+                var userProfiles = new Dictionary<string, string>(); // <UserId, UserImage>
+                foreach (var userId in userIds)
+                {
+                    var user = await _userRequestProducer.RequestUserById(userId);
+                    if (user != null)
+                    {
+                        userProfiles[userId] = user.UserImage;
+                    }
+                }
+
+                // Add Profile Image to Jobs and Services
+                var jobsWithImages = jobs.Select(j => new
+                {
+                    j.Id,
+                    j.Name,
+                    j.WorkplaceType,
+                    j.Timing,
+                    j.Address,
+                    j.CompanyName,
+                    j.Skills,
+                    j.JobType,
+                    j.Description,
+                    j.DatePosted,
+                    j.Location,
+                    j.Experience,
+                    j.MinSalary,
+                    j.MaxSalary,
+                    j.CategoryId,
+                    j.UserId,
+                    ProfileImage = userProfiles.ContainsKey(j.UserId) ? userProfiles[j.UserId] : null
+                }).ToList();
+
+                var servicesWithImages = services.Select(s => new
+                {
+                    s.Id,
+                    s.Name,
+                    s.Description,
+                    s.DatePosted,
+                    s.Location,
+                    s.Address,
+                    s.MinSalary,
+                    s.MaxSalary,
+                    s.CategoryId,
+                    s.UserId,
+                    ProfileImage = userProfiles.ContainsKey(s.UserId) ? userProfiles[s.UserId] : null
+                }).ToList();
+
                 var response = new Dictionary<string, object>();
 
-                if (jobs.Any()) response["Jobs"] = jobs;
-                if (services.Any()) response["Services"] = services;
+                if (jobsWithImages.Any()) response["Jobs"] = jobsWithImages;
+                if (servicesWithImages.Any()) response["Services"] = servicesWithImages;
 
                 return Ok(response);
             }
@@ -195,6 +258,7 @@ namespace JobService.Controllers
                 return StatusCode(500, new { Error = "An error occurred.", Details = ex.Message });
             }
         }
+
         [HttpGet("GetAllJobsAndServices")]
         public async Task<IActionResult> GetAllJobsAndServices()
         {

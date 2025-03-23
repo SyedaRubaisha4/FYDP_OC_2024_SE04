@@ -206,40 +206,82 @@ namespace JobPost_Service.Controllers
             {
                 return BadRequest("User not found ");
             }
-            var userJobs = _context.UserJob.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.JobId).ToList();
-            var userJobList = new List<JobPostDTO>();
 
-            foreach (var job in userJobs)
-            {
-                var Job = await _context.JobPosts.Where(x => x.Id == job && x.Status == Status.Active.ToString()).FirstOrDefaultAsync();
-                var jobPostDTO = new JobPostDTO
+            var userJobs = await _context.UserJob
+                .Where(x => x.UserId == UserId && x.Status == Status.Active.ToString())
+                .Select(x => new
                 {
-                    JobType = Job.JobType,
-                    WorkplaceType = Job.WorkplaceType,
-                    Skills = Job.Skills,
-                    CompanyName = Job.CompanyName,
-                    Name = Job.Name,
-                    Description = Job.Description,
-                    Location = Job.Location,
-                    Address = Job.Address,
-                    PhoneNumber = Job.PhoneNumber,
-                    Email = Job.Email,
-                    Experience = Job.Experience,
-                    MinSalary = Job.MinSalary,
-                    MaxSalary = Job.MaxSalary,
-                    Status = Job.Status,
-                    DatePosted = Job.DatePosted,
-                    UserId = Job.UserId,
-                    CategoryId = Job.CategoryId,
-                    Timing = Job.Timing,
-                    Type = Job.Type
-                };
+                    x.JobId,
+                    x.CreatedDate
+                })
+                .ToListAsync();
 
-                jobPostDTO.JobsStatus = await _context.UserJob.Where(x => x.UserId == UserId && x.JobId == job).Select(x => x.JobsStatus).FirstOrDefaultAsync();
-                userJobList.Add(jobPostDTO);
+            var userJobList = new List<JobPostDto1>();
+
+            foreach (var userJob in userJobs)
+            {
+                var Job = await _context.JobPosts
+                    .Where(x => x.Id == userJob.JobId && x.Status == Status.Active.ToString())
+                    .FirstOrDefaultAsync();
+
+                if (Job != null)
+                {
+                    var jobPostDTO = new JobPostDto1
+                    {
+                        JobType = Job.JobType,
+                        WorkplaceType = Job.WorkplaceType,
+                        Skills = Job.Skills,
+                        CompanyName = Job.CompanyName,
+                        Name = Job.Name,
+                        Description = Job.Description,
+                        Location = Job.Location,
+                        Address = Job.Address,
+                        PhoneNumber = Job.PhoneNumber,
+                        Email = Job.Email,
+                        Experience = Job.Experience,
+                        MinSalary = Job.MinSalary,
+                        MaxSalary = Job.MaxSalary,
+                        Status = Job.Status,
+                        DatePosted = Job.DatePosted,
+                        UserId = Job.UserId,
+                        CategoryId = Job.CategoryId,
+                        Timing = Job.Timing,
+                        Type = Job.Type,
+                        JobsStatus = await _context.UserJob
+                            .Where(x => x.UserId == UserId && x.JobId == userJob.JobId)
+                            .Select(x => x.JobsStatus)
+                            .FirstOrDefaultAsync()
+                    };
+
+                    // ✅ Assign AppliedDate after object initialization
+                    jobPostDTO.AppliedDate = GetRelativeTime(userJob.CreatedDate ?? DateTime.UtcNow);
+
+                    userJobList.Add(jobPostDTO);
+                }
             }
+
             return Ok(userJobList);
         }
+
+        // ✅ Function to calculate relative time
+        private string GetRelativeTime(DateTime appliedAt)
+        {
+            TimeSpan timeDiff = DateTime.UtcNow - appliedAt;
+
+            if (timeDiff.TotalSeconds < 60)
+                return $"{(int)timeDiff.TotalSeconds} seconds ago";
+            if (timeDiff.TotalMinutes < 60)
+                return $"{(int)timeDiff.TotalMinutes} minutes ago";
+            if (timeDiff.TotalHours < 24)
+                return $"{(int)timeDiff.TotalHours} hours ago";
+            if (timeDiff.TotalDays < 30)
+                return $"{(int)timeDiff.TotalDays} days ago";
+            if (timeDiff.TotalDays < 365)
+                return $"{(int)(timeDiff.TotalDays / 30)} months ago";
+
+            return $"{(int)(timeDiff.TotalDays / 365)} years ago";
+        }
+
         [HttpGet("GetUserAppliedService")]
         public async Task<IActionResult> GetUserAppliedService(string UserId)
         {
@@ -247,45 +289,51 @@ namespace JobPost_Service.Controllers
             {
                 return BadRequest("User not found ");
             }
-            var userServices = _context.UserService.Where(x => x.UserId == UserId && x.Status == Status.Active.ToString()).Select(x => x.ServiceId).ToList();
-            var userServiceList = new List<JobServiceDTO>();
 
-            foreach (var job in userServices)
+            var userServices = await _context.UserService
+                .Where(x => x.UserId == UserId && x.Status == Status.Active.ToString())
+                .ToListAsync();  // List<UserService> mil raha hai, jo ki ServiceId ke saath CreatedDate bhi rakhta hai.
+
+            var userServiceList = new List<JobServiceDTO1>();
+
+            foreach (var userService in userServices) // userServices ek list hai jo `UserService` ka data rakhta hai
             {
                 var service = await _context.ServicePosts
-                 .Where(x => x.Id == job && x.Status == Status.Active.ToString())
-                 .FirstOrDefaultAsync();
+                    .Where(x => x.Id == userService.ServiceId && x.Status == Status.Active.ToString())
+                    .FirstOrDefaultAsync();
 
-
-                var jobServiceDTO = new JobServiceDTO
+                if (service != null)
                 {
-                    Name = service.Name,
-                    Description = service.Description,
-                    Location = service.Location,
-                    Address = service.Address,
-                    PhoneNumber = service.PhoneNumber,
-                    Email = service.Email,
-                    Experience = service.Experience,
-                    MinSalary = service.MinSalary,
-                    MaxSalary = service.MaxSalary,
-                    Status = service.Status,
-                    DatePosted = service.DatePosted,
-                    UserId = service.UserId,
-                    CategoryId = service.CategoryId,
-                    Timing = service.Timing,
-                    Type = service.Type,
-                    PreferredDate = service.PreferredDate,
-                    UrgencyLevel = service.UrgencyLevel
+                    var jobServiceDTO = new JobServiceDTO1
+                    {
+                        Name = service.Name,
+                        Description = service.Description,
+                        Location = service.Location,
+                        Address = service.Address,
+                        PhoneNumber = service.PhoneNumber,
+                        Email = service.Email,
+                        Experience = service.Experience,
+                        MinSalary = service.MinSalary,
+                        MaxSalary = service.MaxSalary,
+                        Status = service.Status,
+                        DatePosted = service.DatePosted,
+                        UserId = service.UserId,
+                        CategoryId = service.CategoryId,
+                        Timing = service.Timing,
+                        Type = service.Type,
+                        PreferredDate = service.PreferredDate,
+                        UrgencyLevel = service.UrgencyLevel
+                    };
 
-                };
+                    jobServiceDTO.ServiceStatus = userService.ServiceStatus;
+                    jobServiceDTO.AppliedDate = GetRelativeTime(userService.CreatedDate ?? DateTime.UtcNow);
 
-                jobServiceDTO.ServiceStatus = await _context.UserService.Where(x => x.UserId == UserId && x.ServiceId == job).Select(x => x.ServiceStatus).FirstOrDefaultAsync();
-
-
-                userServiceList.Add(jobServiceDTO);
+                    userServiceList.Add(jobServiceDTO);
+                }
             }
             return Ok(userServiceList);
         }
+
     }
 
 }

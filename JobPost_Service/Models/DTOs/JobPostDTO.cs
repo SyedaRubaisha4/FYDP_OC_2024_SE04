@@ -40,9 +40,9 @@ namespace JobPost_Service.Models.DTOs
         public decimal MaxSalary { get; set; }
 
         [Required]
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
-        public DateTime DatePosted { get; set; }
+        public DateTime? DatePosted { get; set; }
 
         [Required]
         public string? UserId { get; set; }
@@ -54,7 +54,7 @@ namespace JobPost_Service.Models.DTOs
 
         [StringLength(50)]
         public string? Timing { get; set; }
-        public string Type { get; set; }
-        public string JobsStatus { get; set; }
+        public string? Type { get; set; }
+        public string? JobsStatus { get; set; }
     }
 }

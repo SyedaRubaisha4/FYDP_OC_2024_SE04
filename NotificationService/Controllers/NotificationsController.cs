@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using NotificationService.Data;
-using NotificationService.Migrations;
+//ing NotificationService.Migrations;
 using NotificationService.Models;
 using SharedLibrary;
 
