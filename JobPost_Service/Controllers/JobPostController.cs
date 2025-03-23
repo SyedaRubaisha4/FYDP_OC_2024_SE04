@@ -8,6 +8,9 @@ using SharedLibrary;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using JobPost_Service.Helper;
+using MassTransit.Transports;
+using JobPost_Service.RabbitMQ;
+using MassTransit;
 namespace JobPost_Service.Controllers
 {
     [Route("api/[controller]")]
@@ -15,12 +18,39 @@ namespace JobPost_Service.Controllers
     public class JobPostController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMemoryCache _memoryCache;  
+        private readonly IMemoryCache _memoryCache;
+        private readonly UserRequestProducer _userRequestProducer;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public JobPostController(ApplicationDbContext context, IMemoryCache memoryCache)
+        public JobPostController(IPublishEndpoint publishEndpoint,ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
         {
             _context = context;
             _memoryCache = memoryCache;
+            _userRequestProducer = UserRequestProducer;
+            _publishEndpoint = publishEndpoint;
+        }
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetJobPostsByUser(string userId)
+        {
+            var jobPosts = await _context.JobPosts
+                .Where(j => j.UserId == userId)
+                .ToListAsync();
+
+            if (jobPosts == null || jobPosts.Count == 0)
+            {
+                return NotFound("No job posts found for this user.");
+            }
+
+            // Fetch only user image from User Service
+            PublishedUser user = await _userRequestProducer.RequestUserById(userId);
+
+            var result = new
+            {
+                UserImage = user.UserImage, // Only return profile image
+                Jobs = jobPosts
+            };
+
+            return Ok(result);
         }
 
         // GET: api/JobPost
@@ -28,17 +58,39 @@ namespace JobPost_Service.Controllers
         public async Task<IActionResult> GetJobPosts()
         {
             var jobPosts = await _context.JobPosts.ToListAsync();
+
             if (jobPosts == null || jobPosts.Count == 0)
             {
                 return NotFound("No job posts found.");
             }
-            return Ok(jobPosts);
 
-            //var jobPosts = await _context.JobPosts.ToListAsync();
-           
+            var result = new List<object>();
 
-            //return Ok(jobPosts);
+            foreach (var job in jobPosts)
+            {
+                var user = await _userRequestProducer.RequestUserById(job.UserId); // Fetch user one by one
+
+                result.Add(new
+                {
+                    job.Id,
+                    job.Name,
+                    job.Description,
+                    job.UserId,
+                    job.MinSalary,
+                    job.MaxSalary,
+                    job.WorkplaceType,
+                    job.CompanyName,
+                    job.Location,
+                    job.JobType,
+                    job.Address,
+                    job.DatePosted,
+                    UserImage = user?.UserImage // Attach user image
+                });
+            }
+
+            return Ok(result);
         }
+
 
         // GET: api/JobPost/{id}
         [HttpGet("{id}")]
@@ -56,23 +108,35 @@ namespace JobPost_Service.Controllers
 
         
         [HttpPost]
+        
         public async Task<ActionResult<JobPost>> CreateJobPost(JobPost jobPost)
         {
-            if (!_memoryCache.TryGetValue("User", out PublishedUser user))
-            {
-                return BadRequest("No user found in cache.");
-            }
-           
+            //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
+            //{
+            //    return BadRequest("No user found in cache.");
+            //}
 
-            jobPost.UserId = user?.Id;
+            // User ID & default values assign karna
+            jobPost.UserId = jobPost.UserId;
             jobPost.Status = Status.Active.ToString();
             jobPost.Type = "Job";
             jobPost.DatePosted = DateTime.UtcNow;
-             _context.JobPosts.Add(jobPost);
+
+            // JobPost save karna
+            _context.JobPosts.Add(jobPost);
+
+            // 🛠️ Category count update karna
+            var category = await _context.Categories.FindAsync(jobPost.CategoryId);
+            if (category != null)
+            {
+                category.CategoryCount += 1; // Count increment
+            }
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetJobPost", new { id = jobPost.Id }, jobPost);
         }
+
 
 
 
