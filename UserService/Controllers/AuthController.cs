@@ -167,7 +167,7 @@ namespace UserService.Controllers
             Console.WriteLine($"Login failed for PhoneNumber: {model.PhoneNumber}");
             return BadRequest(new { message = "Invalid credentials!" });
         }
-        [HttpPost("logout")]
+        [HttpPost("logout/{id}")]
         public async Task<bool> Logout(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);

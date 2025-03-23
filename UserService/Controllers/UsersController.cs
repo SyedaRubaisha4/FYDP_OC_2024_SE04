@@ -30,7 +30,7 @@ namespace UserService.Controllers
             _userProducer = userProducer;
         }
         [HttpGet("GetAllUsers")]
-        [Authorize]
+       // [Authorize]
         public async Task<List<ApplicationUser>> GetUser()
         {
             var users = await _context.Users
@@ -39,33 +39,33 @@ namespace UserService.Controllers
             return users;
         }
 
-        [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
-       // [Authorize]
+       // [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
+       //// [Authorize]
 
-        //ghfghff
-        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
-        {
-            var user = await _context.Users
-                .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
-                .FirstOrDefaultAsync();
-            var publishedUser = new PublishedUser
-            {
-                Id = user.Id,
-                Name = $"{user.Name}",
-                PhoneNumber = user.PhoneNumber,
-                Experience=user.Experience,
-                UserImage=user.UserImageName,
-                Job=user.Job,
-                City=user.Job,
-                Role=user.Role,
-            };
-            await _userProducer.PublishUser(publishedUser);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user);
-        }
+       // //ghfghff
+       // public async Task<ActionResult<ApplicationUser>> GetUser(string id)
+       // {
+       //     var user = await _context.Users
+       //         .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
+       //         .FirstOrDefaultAsync();
+       //     var publishedUser = new PublishedUser
+       //     {
+       //         Id = user.Id,
+       //         Name = $"{user.Name}",
+       //         PhoneNumber = user.PhoneNumber,
+       //         Experience=user.Experience,
+       //         UserImage=user.UserImageName,
+       //         Job=user.Job,
+       //         City=user.Job,
+       //         Role=user.Role,
+       //     };
+       //     await _userProducer.PublishUser(publishedUser);
+       //     if (user == null)
+       //     {
+       //         return NotFound();
+       //     }
+       //     return Ok(user);
+       // }
 
         [HttpPut("UpdateUser/{id}")]
         //[Authorize]
@@ -148,7 +148,7 @@ namespace UserService.Controllers
             return User;
         }   
         [HttpPost("AddUser")]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<ApplicationUser>> AddUser(UserCreateDto UserCreateDto)
         {
             var user = new ApplicationUser
@@ -198,7 +198,7 @@ namespace UserService.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
  
-        [Authorize]
+       // [Authorize]
         [HttpDelete("DeleteUser{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -213,14 +213,14 @@ namespace UserService.Controllers
 
             return Ok();
         }
-        [Authorize]
-        [HttpGet("GetUsersCount")]
+       // [Authorize]
+        [HttpGet("Count")]
         public async Task<IActionResult> GetUsersAllCount()
         {
             var users= await _context.Users.Where(x=>x.Status==Status.Active.ToString()).CountAsync();
             return Ok(users);
         }
-        [Authorize]
+       // [Authorize]
         [HttpGet("GetUsersWeeklyCount")]
         public async Task<IActionResult> GetUsersWeeklyCount()
         {
@@ -231,7 +231,7 @@ namespace UserService.Controllers
                 .CountAsync(); 
             return Ok(usersThisWeek);
         }
-        [Authorize]
+      //  [Authorize]
         [HttpGet("GetUsersMonthlyCount")]
         public async Task<IActionResult> GetUsersMonthlyCount()
         {
@@ -243,7 +243,7 @@ namespace UserService.Controllers
             return Ok(usersThisMonth);
         }
 
-        [HttpGet("GetUsersFromJob")]
+        [HttpGet("GetUsersFromJob/{job}")]
         public async Task<IActionResult> GetUsersFromJob(string Job)
         {
             var getUsers = await _context.Users.Where(x => x.Job == Job && x.Status==Status.Active.ToString()).ToListAsync();

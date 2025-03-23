@@ -1,4 +1,4 @@
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Data;
 using SharedLibrary;
@@ -51,7 +51,6 @@ namespace NotificationService
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -59,8 +58,16 @@ namespace NotificationService
             }
 
             app.UseHttpsRedirection();
+
+            app.UseRouting(); 
+
             app.UseAuthorization();
-            app.MapControllers();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
 
             app.Run();
         }
