@@ -33,16 +33,14 @@ namespace NotificationService.Controllers
         }
 
       
-        [HttpGet("GetAllNotifications")]
+        [HttpGet("GetAllNotification")]
         public async Task<ActionResult<IEnumerable<GetAllJobAcceptedNotificationDTO>>> GetNotification()
         {
-            // ✅ User cache se get karna
             if (!_memoryCache.TryGetValue("User", out PublishedUser user))
             {
                 return BadRequest("No user found in cache.");
             }
 
-            // ✅ Job Notifications fetch karna
             var notifications = await _context.AcceptedJobNotifcation
                 .Where(x => x.ReceiverId == user.Id)
                 .ToListAsync();
@@ -51,12 +49,10 @@ namespace NotificationService.Controllers
 
             foreach (var notification in notifications)
             {
-                // ✅ User Service ko Request bhejna
                 var response = await _userClient.GetResponse<GetUserByIdResponse>(new GetUserByIdRequest { UserId = notification.SenderId });
 
-                var userResponse = response.Message; // Ye User ka data hoga
+                var userResponse = response.Message;
 
-                // ✅ Notification DTO me Data Populate karna
                 var dto = new GetAllJobAcceptedNotificationDTO
                 {
                   
@@ -100,7 +96,7 @@ namespace NotificationService.Controllers
 
                 foreach (var notification in unreadNotifications)
                 {
-                    notification.IsSee = true; // Mark as read
+                    notification.IsSee = true; 
                 }
 
                 await _context.SaveChangesAsync();
@@ -123,49 +119,7 @@ namespace NotificationService.Controllers
             }
 
             return AcceptedJobNotifcation;
-        }
-
-        // PUT: api/Notifications/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotification(long id, AcceptedJobNotifcation notification)
-        {
-            if (id != notification.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(notification).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NotificationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Notifications
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AcceptedJobNotifcation>> PostNotification(AcceptedJobNotifcation notification)
-        {
-            _context.AcceptedJobNotifcation.Add(notification);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetNotification", new { id = notification.Id }, notification);
-        }
+        }       
 
         // DELETE: api/Notifications/5
         [HttpDelete("{id}")]
@@ -183,9 +137,6 @@ namespace NotificationService.Controllers
             return NoContent();
         }
 
-        private bool NotificationExists(long id)
-        {
-            return _context.AcceptedJobNotifcation.Any(e => e.Id == id);
-        }
+       
     }
 }
