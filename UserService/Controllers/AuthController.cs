@@ -100,8 +100,13 @@ namespace UserService.Controllers
                     // Publish the data using SendUserAsync
                     await _userProducer.PublishUser(publishedUser);
                     HttpContext.Session.SetString("UserId", user.Id);
-                    return Ok(new { message = "User registered successfully!" });
-                }
+                    return Ok(new
+                    {
+                        message = "User registered successfully!",
+                        userId = createdUser.Id
+                    });
+                
+            }
 
                 return BadRequest(new { message = "Error retrieving user after registration." });
             }
