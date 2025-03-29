@@ -60,12 +60,5 @@ namespace JobPost_Service.Models
         public string Type { get; set; }
     }
 
-    // Enum for PostStatus with annotations
-    public enum PostStatus
-    {
-        Pending,
-        InProgress,
-        Completed,
-        Cancelled
-    }
+  
 }

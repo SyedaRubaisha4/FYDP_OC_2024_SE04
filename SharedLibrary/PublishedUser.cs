@@ -20,6 +20,7 @@ namespace SharedLibrary
         public string? UserImage { get; set; }
         public string? Status { get; set; }
         public string? Role { get; set; }
+        public bool IsApplied { get; set; } = false;
 
     }
 }

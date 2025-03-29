@@ -100,8 +100,13 @@ namespace UserService.Controllers
                     // Publish the data using SendUserAsync
                     await _userProducer.PublishUser(publishedUser);
                     HttpContext.Session.SetString("UserId", user.Id);
-                    return Ok(new { message = "User registered successfully!" });
-                }
+                    return Ok(new
+                    {
+                        message = "User registered successfully!",
+                        userId = createdUser.Id
+                    });
+                
+            }
 
                 return BadRequest(new { message = "Error retrieving user after registration." });
             }
@@ -167,7 +172,7 @@ namespace UserService.Controllers
             Console.WriteLine($"Login failed for PhoneNumber: {model.PhoneNumber}");
             return BadRequest(new { message = "Invalid credentials!" });
         }
-        [HttpPost("logout")]
+        [HttpPost("logout/{id}")]
         public async Task<bool> Logout(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);

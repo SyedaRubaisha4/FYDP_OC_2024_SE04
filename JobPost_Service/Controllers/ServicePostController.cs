@@ -6,6 +6,9 @@ using Microsoft.Extensions.Caching.Memory;
 using SharedLibrary;
 using Microsoft.AspNetCore.Authorization;
 using JobPost_Service.Helper;
+using MassTransit;
+using JobPost_Service.RabbitMQ;
+using MassTransit.Transports;
 
 namespace JobPost_Service.Controllers
 {
@@ -15,22 +18,74 @@ namespace JobPost_Service.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMemoryCache _memoryCache;  // Inject IMemoryCache
+        private readonly UserRequestProducer _userRequestProducer;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ServicePostController(ApplicationDbContext context, IMemoryCache memoryCache)
+        public ServicePostController(IPublishEndpoint publishEndpoint,ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
         {
             _context = context;  
-            _memoryCache = memoryCache;
-        }
 
-        // GET: api/ServicePost
+            _memoryCache = memoryCache;
+            _userRequestProducer = UserRequestProducer;
+            _publishEndpoint = publishEndpoint;
+        }
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetServicePostsByUser(string userId)
+        {
+            var servicePosts = await _context.ServicePosts
+                .Where(j => j.UserId == userId)
+                .ToListAsync();
+
+            if (servicePosts == null || servicePosts.Count == 0)
+            {
+                return NotFound("No job posts found for this user.");
+            }
+
+            // Fetch only user image from User Service
+            PublishedUser user = await _userRequestProducer.RequestUserById(userId);
+            var result = new
+            {
+                UserImage = user.UserImage, // Only return profile image
+                Jobs = servicePosts
+            };
+            return Ok(result);
+        }
         [HttpGet]
         public async Task<IActionResult> GetServicePosts()
         {
             var servicePosts = await _context.ServicePosts.ToListAsync();
-            return Ok(servicePosts);
+
+            if (servicePosts == null || servicePosts.Count == 0)
+            {
+                return NotFound("No job posts found.");
+            }
+
+            var result = new List<object>();
+
+            foreach (var service in servicePosts)
+            {
+                var user = await _userRequestProducer.RequestUserById(service.UserId); // Fetch user one by one
+
+                result.Add(new
+                {
+                    service.Id,
+                    service.Name,
+                    service.Description,
+                    service.UserId,
+                    service.MinSalary,
+                    service.MaxSalary,
+                   
+                    service.Location,
+                    
+                    service.Address,
+                    service.DatePosted,
+                    UserImage = user?.UserImage // Attach user image
+                });
+            }
+
+            return Ok(result);
         }
 
-        // GET: api/ServicePost/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServicePost(int id)
         {
@@ -43,28 +98,26 @@ namespace JobPost_Service.Controllers
 
             return Ok(servicePost);
         }
-
-        // POST: api/ServicePost
         [HttpPost]
         public async Task<ActionResult<ServicePost>> CreateServicePost(ServicePost servicePost)
         {
-             if (!_memoryCache.TryGetValue("User", out PublishedUser user))
-                {
-                    return BadRequest("No user found in cache.");
-                }
+            servicePost.Status = Status.Active.ToString();
+            servicePost.DatePosted = DateTime.UtcNow;
 
-            servicePost.UserId = user .Id?? "123"; 
-            servicePost.Status = Status.Active.ToString(); 
-            servicePost.DatePosted = DateTime.UtcNow; 
-
-          
             _context.ServicePosts.Add(servicePost);
+
+            // Find the category and increment the count
+            var category = await _context.Categories.FindAsync(servicePost.CategoryId);
+            if (category != null)
+            {
+                category.CategoryCount += 1;
+            }
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetServicePost", new { id = servicePost.Id }, servicePost);
         }
 
-        // PUT: api/ServicePost/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateServicePost(int id, ServicePost servicePost)
         {
@@ -94,7 +147,6 @@ namespace JobPost_Service.Controllers
             return NoContent();
         }
 
-        // DELETE: api/ServicePost/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServicePost(int id)
         {
@@ -115,9 +167,7 @@ namespace JobPost_Service.Controllers
         {
             var jobs = await _context.ServicePosts.Where(x => x.Status == Status.Active.ToString()).CountAsync();
             return Ok(jobs);
-        }
-
-        
+        }        
         [HttpGet("GetServiceWeeklyCount")]
         public async Task<IActionResult> GetServiceWeeklyCount()
         {
