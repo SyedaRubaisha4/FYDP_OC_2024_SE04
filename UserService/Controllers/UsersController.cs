@@ -39,33 +39,33 @@ namespace UserService.Controllers
             return users;
         }
 
-       // [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
-       //// [Authorize]
+         [HttpGet("GetUsersById/{id}")]//hhrkii  <Button title="Update Profile" onPress={() => navigation.navigate('UpdateProfile', { userData: data })} />
+        //// [Authorize]
 
-       // //ghfghff
-       // public async Task<ActionResult<ApplicationUser>> GetUser(string id)
-       // {
-       //     var user = await _context.Users
-       //         .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
-       //         .FirstOrDefaultAsync();
-       //     var publishedUser = new PublishedUser
-       //     {
-       //         Id = user.Id,
-       //         Name = $"{user.Name}",
-       //         PhoneNumber = user.PhoneNumber,
-       //         Experience=user.Experience,
-       //         UserImage=user.UserImageName,
-       //         Job=user.Job,
-       //         City=user.Job,
-       //         Role=user.Role,
-       //     };
-       //     await _userProducer.PublishUser(publishedUser);
-       //     if (user == null)
-       //     {
-       //         return NotFound();
-       //     }
-       //     return Ok(user);
-       // }
+        // //ghfghff
+        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
+        {
+            var user = await _context.Users
+                .Where(x => x.Status == Status.Active.ToString() && x.Id == id)
+                .FirstOrDefaultAsync();
+            var publishedUser = new PublishedUser
+            {
+                Id = user.Id,
+                Name = $"{user.Name}",
+                PhoneNumber = user.PhoneNumber,
+                Experience = user.Experience,
+                UserImage = user.UserImageName,
+                Job = user.Job,
+                City = user.Job,
+                Role = user.Role,
+            };
+            await _userProducer.PublishUser(publishedUser);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
 
         [HttpPut("UpdateUser/{id}")]
         //[Authorize]

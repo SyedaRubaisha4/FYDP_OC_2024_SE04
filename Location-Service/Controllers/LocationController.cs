@@ -1,7 +1,11 @@
 ﻿using Location_Service.Data;
 using Location_Service.Models;
+using Location_Service.RabbitMQ;
+using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary;
 using System.Threading.Tasks;
 
 namespace Location_Service.Controllers
@@ -11,10 +15,14 @@ namespace Location_Service.Controllers
     public class LocationController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly UserRequestProducer _userRequestProducer;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public LocationController(AppDbContext context)
+        public LocationController(AppDbContext context, UserRequestProducer UserRequestProducer, IPublishEndpoint publishEndpoint)
         {
             _context = context;
+            _userRequestProducer = UserRequestProducer;
+            _publishEndpoint = publishEndpoint;
         }
 
         // ✅ Save Location (Ensure unique entry per UserId)
@@ -88,5 +96,83 @@ namespace Location_Service.Controllers
             await _context.SaveChangesAsync();
             return Ok("Location deleted successfully.");
         }
+
+        [HttpGet("GetUsersFromJob/{job}/{userId}")]
+        public async Task<IActionResult> GetUsersFromJob(string job, string userId)
+        {
+            const double R = 6371; // Earth radius in km
+            const double MaxDistance = 5; // 5km radius
+
+            // 🔹 Get the current user’s location
+            var currentUserLocation = await _context.Locations
+                .Where(l => l.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (currentUserLocation == null)
+                return BadRequest("User location not found.");
+
+            double userLatRad = ToRadians(currentUserLocation.Latitude);
+            double userLonRad = ToRadians(currentUserLocation.Longitude);
+
+            // 🔹 Fetch all locations from DB first
+            var allUsers = await _context.Locations.ToListAsync();
+
+            // 🔹 Perform distance calculation in C#
+            var nearbyUsers = allUsers
+     .Select(loc => new
+     {
+         loc.UserId,
+         loc.Latitude,
+         loc.Longitude,
+         Distance = R * Math.Acos(
+             Math.Min(1, Math.Max(-1,
+                 Math.Cos(userLatRad) * Math.Cos(ToRadians(loc.Latitude)) *
+                 Math.Cos(ToRadians(loc.Longitude) - userLonRad) +
+                 Math.Sin(userLatRad) * Math.Sin(ToRadians(loc.Latitude))
+             ))
+         )
+     })
+     .Where(x => x.Distance <= MaxDistance && x.UserId != userId) // ✅ Apni ID ko exclude kiya
+     .OrderBy(x => x.Distance)
+     .ToList();
+
+
+            if (!nearbyUsers.Any())
+                return NotFound("No users found nearby.");
+
+            var userList = new List<object>();
+
+            // 🔹 Fetch user details from User Service using RabbitMQ
+            foreach (var userLoc in nearbyUsers)
+            {
+                try
+                {
+                    PublishedUser userDetails = await _userRequestProducer.RequestUserById(userLoc.UserId);
+                    if (userDetails != null && userDetails.Job == job)
+                    {
+                        userList.Add(new
+                        {
+                            userDetails.Id,
+                            userDetails.Name,
+                            userDetails.Job,
+                            userLoc.Latitude,
+                            userLoc.Longitude,
+                            userLoc.Distance,
+                            userDetails.PhoneNumber,
+                            userDetails.UserImage
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Error fetching user details: {ex.Message}");
+                }
+            }
+
+            return Ok(userList);
+        }
+
+        // 🔹 Helper function for radians conversion
+        private static double ToRadians(double angle) => Math.PI * angle / 180.0;
     }
 }
