@@ -9,6 +9,7 @@ using JobPost_Service.Helper;
 using MassTransit;
 using JobPost_Service.RabbitMQ;
 using MassTransit.Transports;
+using JobPost_Service.Models.DTOs;
 
 namespace JobPost_Service.Controllers
 {
@@ -119,32 +120,31 @@ namespace JobPost_Service.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateServicePost(int id, ServicePost servicePost)
+        public async Task<IActionResult> UpdateServicePost(int id, ServicePostDto servicePost)
         {
-            if (id != servicePost.Id)
+            var service =await _context.ServicePosts.FindAsync(id);
+            if (service==null)
             {
-                return BadRequest();
+                return BadRequest("Service post not found");
             }
 
-            _context.Entry(servicePost).State = EntityState.Modified;
+            service.Name = servicePost.Name;
+            service.Description = servicePost.Description;
+            service.Location = servicePost.Location;
+            service.Address = servicePost.Address;
+            service.PhoneNumber = servicePost.PhoneNumber;
+            service.Email = servicePost.Email;
+            service.Experience = servicePost.Experience;
+            service.MinSalary = servicePost.MinSalary;
+            service.MaxSalary = servicePost.MaxSalary;
+            service.Timing = servicePost.Timing;
+            service.Type = servicePost.Type;
+            service.PreferredDate = servicePost.PreferredDate;
+            service.UrgencyLevel = servicePost.UrgencyLevel;
+            _context.ServicePosts.Update(service);
+          await  _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ServicePostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(service);
         }
 
         [HttpDelete("{id}")]
@@ -155,8 +155,8 @@ namespace JobPost_Service.Controllers
             {
                 return NotFound();
             }
-
-            _context.ServicePosts.Remove(servicePost);
+            servicePost.Status = Status.Blocked.ToString();
+            _context.ServicePosts.Update(servicePost);
             await _context.SaveChangesAsync();
 
             return NoContent();

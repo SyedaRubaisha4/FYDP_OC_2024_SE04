@@ -11,6 +11,7 @@ using JobPost_Service.Helper;
 using MassTransit.Transports;
 using JobPost_Service.RabbitMQ;
 using MassTransit;
+using JobPost_Service.Models.DTOs;
 namespace JobPost_Service.Controllers
 {
     [Route("api/[controller]")]
@@ -142,32 +143,30 @@ namespace JobPost_Service.Controllers
 
         // PUT: api/JobPost/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateJobPost(int id, JobPost jobPost)
+        public async Task<IActionResult> UpdateJobPost(int id, JobPostUpdateDto jobPost)
         {
-            if (id != jobPost.Id)
+            var job=_context.JobPosts.Find(id);
+            if ( job==null)
             {
-                return BadRequest();
+                return BadRequest("no job exist");
             }
 
-            _context.Entry(jobPost).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JobPostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+           job.Name=jobPost.Name;
+            job.Description=jobPost.Description;
+            job.Location= jobPost.Location;
+            job.Address= jobPost.Address;
+            job.PhoneNumber= jobPost.PhoneNumber;
+            job.Email=jobPost.Email;
+            job.MaxSalary=
+                jobPost.MaxSalary;
+            job.MinSalary= jobPost.MinSalary;
+            job.JobType=jobPost.JobType;
+            job.WorkplaceType=jobPost.WorkplaceType;
+            job.Skills=jobPost.Skills;
+            job.CompanyName=jobPost.CompanyName;
+            _context.JobPosts.Update(job);
+            _context.SaveChanges();
+            return Ok(job);
         }
 
         // DELETE: api/JobPost/{id}
@@ -179,8 +178,8 @@ namespace JobPost_Service.Controllers
             {
                 return NotFound();
             }
-
-            _context.JobPosts.Remove(jobPost);
+            jobPost.Status=Status.Blocked.ToString();
+            _context.JobPosts.Update(jobPost);
             await _context.SaveChangesAsync();
 
             return NoContent();

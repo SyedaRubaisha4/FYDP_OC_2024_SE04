@@ -11,6 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NotificationService.Data;
 //ing NotificationService.Migrations;
 using NotificationService.Models;
+using NuGet.Versioning;
 using SharedLibrary;
 
 namespace NotificationService.Controllers
@@ -38,7 +39,7 @@ namespace NotificationService.Controllers
         {
             if (!_memoryCache.TryGetValue("User", out PublishedUser user))
             {
-                return BadRequest("No user found in cache.");
+                return BadRequest("you need to login ");
             }
 
             var notifications = await _context.AcceptedJobNotifcation
@@ -59,7 +60,8 @@ namespace NotificationService.Controllers
                    JobStatus=notification.JobStatus,
                     IsSee=notification.IsSee,
                     CreatedDate=notification.CreatedDate,
-                    SenderName = userResponse?.Name 
+                    SenderName = userResponse?.Name ,
+                    NotificationText=notification.NotificationText,
                 };
 
                 responseList.Add(dto);
@@ -119,24 +121,9 @@ namespace NotificationService.Controllers
             }
 
             return AcceptedJobNotifcation;
-        }       
-
-        // DELETE: api/Notifications/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNotification(long id)
-        {
-            var notification = await _context.AcceptedJobNotifcation.FindAsync(id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
-
-            _context.AcceptedJobNotifcation.Remove(notification);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
        
+
+        }
     }
-}

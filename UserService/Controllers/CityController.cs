@@ -61,7 +61,8 @@ namespace UserService.Controllers
             {
                 City.Name=city.Name;
                 City.ModifiedDate = DateTime.Now;
-                 _context.City.Update(City);
+                _context.City.Update(City);
+               await _context.SaveChangesAsync();
                 return Ok(City);
             }
         }
@@ -107,7 +108,7 @@ namespace UserService.Controllers
 
             return Ok("City deleted successfully");
         }
-        [HttpDelete("CityCount")]
+        [HttpPost("CityCount")]
         public async Task<IActionResult> CityCount(string Name)
         {
             var cityCount=await _context.City.Where(x=>x.Name==Name).FirstOrDefaultAsync();
