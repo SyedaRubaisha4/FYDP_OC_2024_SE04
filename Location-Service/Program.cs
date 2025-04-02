@@ -1,10 +1,48 @@
+
 using Location_Service.Data;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary;
 using System.Text.Json.Serialization;
+using RabbitMQ.Client;
+using MassTransit;
+using Location_Service.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMemoryCache();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<UserConsumer>();
+    x.AddRequestClient<UserRequestMessage>(new Uri("queue:user-service-queue"));
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.Publish<PublishedUser>(p =>
+        {
+            p.ExchangeType = ExchangeType.Fanout;  // ? Corrected Binding
+        });
+
+        cfg.ReceiveEndpoint("user-consumer-queue", e =>
+        {
+            e.ConfigureConsumer<UserConsumer>(context);
+        });
+    });
+});
+
+
+builder.Services.AddScoped<IConsumer<PublishedUser>, UserConsumer>();
+
+builder.Services.AddScoped<UserRequestProducer>();
+
+
 
 // Add services to the container.
 
@@ -12,6 +50,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+// Register UserConsumer for dependency injection
+//builder.Services.AddScoped<IConsumer<PublishedUser>, UserConsumer>();
+
+//builder.Services.AddScoped<UserRequestProducer>();
 
 //var app = builder.Build();
 
@@ -60,3 +104,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);

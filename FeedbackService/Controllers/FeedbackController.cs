@@ -139,5 +139,26 @@ namespace FeedbackService.Controllers
 
             return Ok(new { message = "Feedback deleted successfully" });
         }
+        [HttpGet("GetUserRating/{targetId}")]
+        public async Task<IActionResult> GetUserRating(string targetId)
+        {
+            var feedbacks = await _context.Feedbacks
+                .Where(f => f.TargetID == targetId)
+                .ToListAsync();
+
+            if (!feedbacks.Any())
+                return Ok(new { message = "No ratings yet", averageRating = 0 });
+
+            // Total rating sum
+            double totalStars = (double)feedbacks.Sum(f => f.Rating);
+
+            // Average rating
+            double averageRating = totalStars / feedbacks.Count;
+
+            return Ok(new { targetId, averageRating = Math.Round(averageRating, 1) });
+        }
+
+
+
     }
 }
