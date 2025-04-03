@@ -1,0 +1,37 @@
+name: Deploy UserService
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'UserService/**'  # 👈 Sirf UserService folder ka code trigger hoga
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore UserService
+
+      - name: Build
+        run: dotnet build UserService --no-restore --configuration Release
+
+      - name: Publish
+        run: dotnet publish UserService -c Release -o publish
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'growuserservice'  # 👈 Web App ka naam
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: publish
