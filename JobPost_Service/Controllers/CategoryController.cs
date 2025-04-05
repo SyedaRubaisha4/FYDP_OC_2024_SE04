@@ -260,32 +260,39 @@ namespace JobService.Controllers
         }
 
         [HttpGet("GetAllJobsAndServices")]
-        public async Task<IActionResult> GetAllJobsAndServices()
+        public async Task<IActionResult> GetAllJobsAndServices([FromQuery] string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { Message = "UserId is required." });
+            }
+
             try
             {
                 var jobs = await _context.JobPosts
+                    .Where(j => j.UserId == userId) // ✅ Filter by UserId
                     .AsNoTracking()
                     .ToListAsync();
 
                 var services = await _context.ServicePosts
+                    .Where(s => s.UserId == userId) // ✅ Filter by UserId
                     .AsNoTracking()
                     .ToListAsync();
 
                 if (!jobs.Any() && !services.Any())
                 {
-                    return NotFound(new { Message = "No jobs or services found." });
+                    return NotFound(new { Message = "No jobs or services found for this user." });
                 }
 
                 return Ok(new { Jobs = jobs, Services = services });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error fetching jobs and services: {ex.Message}");
-                return StatusCode(500, new { Error = "An error occurred.", Details = ex.Message });
+                return StatusCode(500, new { Message = "An error occurred.", Error = ex.Message });
             }
         }
-      
+
+     
         [HttpGet("GetAllCategoryCount")]
         public async Task<IActionResult> GetAllCategoryCount()
         {
