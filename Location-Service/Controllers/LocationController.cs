@@ -61,18 +61,17 @@ namespace Location_Service.Controllers
             return Ok(locations);
         }
 
-        // ✅ Update Location (Only if UserId matches)
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateLocationById(int id, [FromBody] Location updatedLocation)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateLocation([FromBody] LocationDto updatedLocation)
         {
-            var existingLocation = await _context.Locations.FindAsync(id);
+            // Find existing location by UserId
+            var existingLocation = await _context.Locations
+                .FirstOrDefaultAsync(l => l.UserId == updatedLocation.UserId);
+
             if (existingLocation == null)
-                return NotFound("Location not found.");
+                return NotFound("Location not found for the user.");
 
-            // Ensure only the same user can update their location
-            if (existingLocation.UserId != updatedLocation.UserId)
-                return Unauthorized("You are not allowed to update this location.");
-
+            // Update latitude and longitude
             existingLocation.Latitude = updatedLocation.Latitude;
             existingLocation.Longitude = updatedLocation.Longitude;
 
@@ -98,10 +97,10 @@ namespace Location_Service.Controllers
         }
 
         [HttpGet("GetUsersFromJob/{job}/{userId}")]
-        public async Task<IActionResult> GetUsersFromJob(string job, string userId)
+        public async Task<IActionResult> GetUsersFromJob(string job, string userId, [FromQuery] double MaxDistance = 5)
         {
             const double R = 6371; // Earth radius in km
-            const double MaxDistance = 5; // 5km radius
+         //   const double MaxDistance = 5; // 5km radius
 
             // 🔹 Get the current user’s location
             var currentUserLocation = await _context.Locations

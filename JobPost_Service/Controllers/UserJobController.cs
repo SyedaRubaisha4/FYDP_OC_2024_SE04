@@ -21,12 +21,12 @@ namespace JobPost_Service.Controllers
         private readonly IMemoryCache _memoryCache;
         private readonly UserRequestProducer _userRequestProducer;
         private readonly IPublishEndpoint _publishEndpoint;
-        public UserJobController(IPublishEndpoint publishEndpoint,ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
+        public UserJobController(IPublishEndpoint publishEndpoint, ApplicationDbContext context, IMemoryCache memoryCache, UserRequestProducer UserRequestProducer)
         {
             _context = context;
             _memoryCache = memoryCache;
             _userRequestProducer = UserRequestProducer;
-            _publishEndpoint= publishEndpoint;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpPost("CreateUserjob")]
@@ -71,7 +71,7 @@ namespace JobPost_Service.Controllers
 
         [HttpGet("GetApplicantsByJob/{jobId}")]
 
-      
+
 
         public async Task<IActionResult> GetApplicantsByJob(long jobId)
         {
@@ -216,6 +216,9 @@ namespace JobPost_Service.Controllers
                 return BadRequest("User not found ");
             }
 
+            // Fetch User Image
+            PublishedUser user = await _userRequestProducer.RequestUserById(UserId);
+
             var userJobs = await _context.UserJob
                 .Where(x => x.UserId == UserId && x.Status == Status.Active.ToString())
                 .Select(x => new
@@ -262,15 +265,23 @@ namespace JobPost_Service.Controllers
                             .FirstOrDefaultAsync()
                     };
 
-                    // ✅ Assign AppliedDate after object initialization
+                    // ✅ Assign AppliedDate
                     jobPostDTO.AppliedDate = GetRelativeTime(userJob.CreatedDate ?? DateTime.UtcNow);
 
                     userJobList.Add(jobPostDTO);
                 }
             }
 
-            return Ok(userJobList);
+            // ✅ Return user image along with applied jobs
+            var result = new
+            {
+                UserImage = user?.UserImage, // Ensure null safety
+                AppliedJobs = userJobList
+            };
+
+            return Ok(result);
         }
+
 
         // ✅ Function to calculate relative time
         private string GetRelativeTime(DateTime appliedAt)
@@ -299,13 +310,16 @@ namespace JobPost_Service.Controllers
                 return BadRequest("User not found ");
             }
 
+            // ✅ Fetch User Image
+            PublishedUser user = await _userRequestProducer.RequestUserById(UserId);
+
             var userServices = await _context.UserService
                 .Where(x => x.UserId == UserId && x.Status == Status.Active.ToString())
-                .ToListAsync();  // List<UserService> mil raha hai, jo ki ServiceId ke saath CreatedDate bhi rakhta hai.
+                .ToListAsync();
 
             var userServiceList = new List<JobServiceDTO1>();
 
-            foreach (var userService in userServices) // userServices ek list hai jo `UserService` ka data rakhta hai
+            foreach (var userService in userServices)
             {
                 var service = await _context.ServicePosts
                     .Where(x => x.Id == userService.ServiceId && x.Status == Status.Active.ToString())
@@ -331,18 +345,23 @@ namespace JobPost_Service.Controllers
                         Timing = service.Timing,
                         Type = service.Type,
                         PreferredDate = service.PreferredDate,
-                        UrgencyLevel = service.UrgencyLevel
+                        UrgencyLevel = service.UrgencyLevel,
+                        ServiceStatus = userService.ServiceStatus,
+                        AppliedDate = GetRelativeTime(userService.CreatedDate ?? DateTime.UtcNow)
                     };
-
-                    jobServiceDTO.ServiceStatus = userService.ServiceStatus;
-                    jobServiceDTO.AppliedDate = GetRelativeTime(userService.CreatedDate ?? DateTime.UtcNow);
 
                     userServiceList.Add(jobServiceDTO);
                 }
             }
-            return Ok(userServiceList);
+
+            // ✅ Return user image along with applied services
+            var result = new
+            {
+                UserImage = user?.UserImage, // Ensure null safety
+                AppliedServices = userServiceList
+            };
+
+            return Ok(result);
         }
-
     }
-
-}
+    }
