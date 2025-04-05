@@ -116,7 +116,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "userservice1.azurewebsites.net"
-            
+
         }
       ],
       "UpstreamPathTemplate": "/users/all",
@@ -128,7 +128,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "userservice1.azurewebsites.net"
-            
+
         }
       ],
       "UpstreamPathTemplate": "/users/{id}",
@@ -139,7 +139,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "userservice1.azurewebsites.net"            
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/users/update/{id}",
@@ -150,7 +150,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "userservice1.azurewebsites.net"            
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/users/add",
@@ -161,12 +161,391 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "userservice1.azurewebsites.net"      
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/users/delete{id}",
       "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/Count",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/user/count",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/GetUsersWeeklyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/user/weekly-count",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/GetUsersMonthlyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/user/monthly-count",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/GetUsersFromJob/{job}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/user/job/{job}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }, //Notification controller
+    {
+      "DownstreamPathTemplate": "/api/notifications/GetAllNotification",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/notifications/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/notifications/GetUnreadCount/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/notifications/unread/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/notifications/MarkAsRead/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notificationservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/notifications/markread/{userId}",
+      "UpstreamHttpMethod": [ "POST" ]
+    }, // category 
+    {
+      "DownstreamPathTemplate": "/api/Category/AllCategories",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/Addcategory",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/add",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/{id}/posts",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/{id}/posts",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/GetAllJobsAndServices",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/all-jobs-and-services",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/GetAllCategoryCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/count",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/GetCategoryWeeklyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/weekly-count",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Category/GetCategoryMonthlyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/category/monthly-count",
+      "UpstreamHttpMethod": [ "GET" ]
+    }, // Job post controller 
+    {
+      "DownstreamPathTemplate": "/api/JobPost",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "jobservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/job/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/post",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost/user/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/user/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost/GetAllJobCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/count/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost/GetJobWeeklyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/count/weekly",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/JobPost/GetJobMonthlyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/job/count/monthly",
+      "UpstreamHttpMethod": [ "GET" ]
+    }, // Service controller
+    {
+      "DownstreamPathTemplate": "/api/ServicePost",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "jobservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/service/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost/user/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service/user/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost/GetAllServiceCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service/count/all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost/GetServiceWeeklyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service/count/weekly",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ServicePost/GetServiceMonthlyCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/service/count/monthly",
+      "UpstreamHttpMethod": [ "GET" ]
+    }, // User job 
+    {
+      "DownstreamPathTemplate": "/api/UserJob/CreateUserjob",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/createuserjob",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/DeleteUserJob/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/deleteuserjob/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetApplicantsByJob/{jobId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getapplicantsbyjob/{jobId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/CreateUserService",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/createuserservice",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetApplicantsByService/{ServiceId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getapplicantsbyservice/{ServiceId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetUserJobCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getuserjobcount",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetUserServiceCount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getuserservicecount",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/AcceptedJobApplication",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/acceptedjob",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/AcceptedServiceApplication",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/acceptedservice",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetUserAppliedJobs",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getuserappliedjobs",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserJob/GetUserAppliedService",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "jobservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/userjob/getuserappliedservice",
+      "UpstreamHttpMethod": [ "GET" ]
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://growpakistan.azurewebsites.net"
