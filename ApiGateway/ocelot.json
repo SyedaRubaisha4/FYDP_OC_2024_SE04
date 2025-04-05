@@ -1,156 +1,11 @@
 ﻿{
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Feedback/GetAllFeedback",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/AllFeedback",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/GetById/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/FeedbackById/{id}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/TargetFeedback/{targetId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/TargetFeedback/{targetId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/SenderFeedback/{senderId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/SenderFeedback/{senderId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/PostFeedback",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/PostFeedback",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/UpdateFeedback/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/UpdateFeedback/{id}",
-      "UpstreamHttpMethod": [ "PUT" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Feedback/DeletedFeedback/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5209
-        }
-      ],
-      "UpstreamPathTemplate": "/DeleteFeedback/{id}",
-      "UpstreamHttpMethod": [ "Delete" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Notifications/GetAllNotification",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5074
-        }
-      ],
-      "UpstreamPathTemplate": "/UserNotification",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Notifications/GetUnreadCount/{userId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5074
-        }
-      ],
-      "UpstreamPathTemplate": "/GetUnreadCount/{userId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Notifications/MarkAsRead/{userId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5074
-        }
-      ],
-      "UpstreamPathTemplate": "/MarkAsRead/{userId}",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Notifications/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5074
-        }
-      ],
-      "UpstreamPathTemplate": "/GetNotificationById/{id}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Notifications/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5074
-        }
-      ],
-      "UpstreamPathTemplate": "/DeleteNotification/{id}",
-      "UpstreamHttpMethod": [ "DELETE" ]
-    },
-    {
       "DownstreamPathTemplate": "/api/City/GetAllCity",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/GetAllCities",
@@ -158,11 +13,10 @@
     },
     {
       "DownstreamPathTemplate": "/api/City/GetCityById/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/CityById/{id}",
@@ -170,11 +24,10 @@
     },
     {
       "DownstreamPathTemplate": "/api/City/UpdateCity/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/UpdateCity/{id}",
@@ -182,11 +35,10 @@
     },
     {
       "DownstreamPathTemplate": "/api/City/AddCity",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/AddCity",
@@ -194,35 +46,32 @@
     },
     {
       "DownstreamPathTemplate": "/api/City/DeleteCity/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/DeleteCity/{id}",
       "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/City/CityCount?Name={Name}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/City/CityCount",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/CityCount",
-      "UpstreamHttpMethod": [ "DELETE" ]
-    },
+      "UpstreamHttpMethod": [ "GET" ]
+    }, // Auth controller apis    
     {
       "DownstreamPathTemplate": "/api/Auth/signup",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/signup",
@@ -230,11 +79,10 @@
     },
     {
       "DownstreamPathTemplate": "/api/Auth/login",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/login",
@@ -242,11 +90,10 @@
     },
     {
       "DownstreamPathTemplate": "/api/Auth/logout/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/logout/{id}",
@@ -254,476 +101,74 @@
     },
     {
       "DownstreamPathTemplate": "/api/Auth/refresh-token",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
         }
       ],
       "UpstreamPathTemplate": "/refresh-token",
       "UpstreamHttpMethod": [ "POST" ]
-    },
+    }, // Users controlller 
     {
-      "DownstreamPathTemplate": "/api/Users/GetAllUsers",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/users/GetAllUsers",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
+            
         }
       ],
-      "UpstreamPathTemplate": "/users/getall",
+      "UpstreamPathTemplate": "/users/all",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Users/GetUsersById/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/users/GetUsersById/{id}",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"
+            
         }
       ],
       "UpstreamPathTemplate": "/users/{id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Users/UpdateUser/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/users/UpdateUser/{id}",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"            
         }
       ],
       "UpstreamPathTemplate": "/users/update/{id}",
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Users/GetUserData",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/users/AddUser",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
-        }
-      ],
-      "UpstreamPathTemplate": "/users/me",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Users/AddUser",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"            
         }
       ],
       "UpstreamPathTemplate": "/users/add",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Users/DeleteUser{id}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/users/DeleteUser{id}",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5165
+          "Host": "userservice1.azurewebsites.net"      
         }
       ],
-      "UpstreamPathTemplate": "/users/delete/{id}",
+      "UpstreamPathTemplate": "/users/delete{id}",
       "UpstreamHttpMethod": [ "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Users/Count",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5165
-        }
-      ],
-      "UpstreamPathTemplate": "/count",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Users/GetUsersWeeklyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5165
-        }
-      ],
-      "UpstreamPathTemplate": "/weekly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Users/GetUsersMonthlyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5165
-        }
-      ],
-      "UpstreamPathTemplate": "/monthly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Users/GetUsersFromJob/{job}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5165
-        }
-      ],
-      "UpstreamPathTemplate": "/job/{job}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/AllCategories",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/categories/all",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/categories/{id}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/Addcategory",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/categories/add",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/{id}/posts",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/categories/{id}/posts",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/GetAllJobsAndServices",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/categories/GetAllJobsAndServices",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/GetAllCategoryCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/Categorycount",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/GetCategoryWeeklyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/count/weekly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Category/GetCategoryMonthlyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/count/monthly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/job/getjob",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/jobpost/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/job/jobpost",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost/user/{userId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/jobpost/user/{userId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost/GetAllJobCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/jobpostcount",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost/GetJobWeeklyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/jobweeklycount",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/JobPost/GetJobMonthlyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/jobmonthcount",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/user/{userId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service/user/{userId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetAllServiceCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service/count/all",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetServiceWeeklyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service/count/weekly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetServiceMonthlyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/service/count/monthly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/user/{userId}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost/user/{userId}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetAllServiceCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost/count/all",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetServiceWeeklyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost/count/weekly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/ServicePost/GetServiceMonthlyCount",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5140
-        }
-      ],
-      "UpstreamPathTemplate": "/servicepost/count/monthly",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-
-   
+    }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5000"
+    "BaseUrl": "https://growpakistan.azurewebsites.net"
   }
 }
