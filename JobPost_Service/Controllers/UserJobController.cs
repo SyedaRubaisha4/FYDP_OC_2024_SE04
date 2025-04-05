@@ -173,6 +173,7 @@ namespace JobPost_Service.Controllers
                 ApplicantId = acceptedJobApplication.ApplicantId,
                 JobId = acceptedJobApplication.JobId,
                 JobStatus = AcceptedJobApplicationDTO.JobsStatus,
+                NotificationText="Job",
             });
 
             return Ok(acceptedJobApplication);
@@ -196,6 +197,14 @@ namespace JobPost_Service.Controllers
             service.ServiceStatus = AcceptedServiceApplicationDTO.ServiceStatus;
             _context.UserService.Update(service);
             await _context.SaveChangesAsync();
+            await _publishEndpoint.Publish(new AcceptedJobNotificationEvent
+            {
+                UserId = AcceptedServiceApplicationDTO.UserId,
+                ApplicantId = AcceptedServiceApplicationDTO.ApplicantId,
+                JobId = AcceptedServiceApplicationDTO.ServiceId,
+                JobStatus =AcceptedServiceApplicationDTO.ServiceStatus,
+                NotificationText = "Service",
+            });
             return Ok(acceptedServiceApplication);
         }
 

@@ -128,8 +128,10 @@ namespace JobService.Controllers
             {
                 return NotFound();
             }
+            Category.Status=Status.Blocked.ToString();
 
-            _context.Categories.Remove(Category);
+            _context.Categories.Update(Category);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

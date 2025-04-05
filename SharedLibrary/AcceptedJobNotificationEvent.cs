@@ -12,7 +12,8 @@ namespace SharedLibrary
         public string ApplicantId { get; set; }
         public long JobId { get; set; }
         public string JobStatus { get; set; }
-        
+        public string NotificationText { get; set; }
+
     }
 
 }

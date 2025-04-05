@@ -29,7 +29,8 @@ public class AcceptedJobNotificationConsumer : IConsumer<AcceptedJobNotification
             JobStatus = message.JobStatus,  
             CreatedDate = DateTime.UtcNow,
             Status="Active",
-            IsSee=false
+            IsSee=false,
+            NotificationText=message.NotificationText,
         };
         //if (!_memoryCache.TryGetValue("User", out PublishedUser user))
         //{
