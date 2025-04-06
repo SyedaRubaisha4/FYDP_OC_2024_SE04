@@ -1,6 +1,8 @@
 
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Security.Data;
+using SharedLibrary;
 
 namespace Security
 {
@@ -18,6 +20,20 @@ namespace Security
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddRequestClient<GetUserByIdRequest>(); // ?? Register the client
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("rabbitmq://localhost", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                   
+                });
+            });
 
 
             var app = builder.Build();

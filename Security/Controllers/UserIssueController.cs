@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Security.Data;
 using Security.Models;
 using Security.Models.DTOs;
+using SharedLibrary;
+using MassTransit;
 
 namespace Security.Controllers
 {
@@ -16,18 +18,38 @@ namespace Security.Controllers
     public class UserIssueController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRequestClient<GetUserByIdRequest> _userClient;
 
-        public UserIssueController(ApplicationDbContext context)
+
+
+        public UserIssueController(ApplicationDbContext context, IRequestClient<GetUserByIdRequest> userClient)
         {
             _context = context;
+            _userClient = userClient;
         }
 
-        // GET: api/UserIssue
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserIssue>>> GetUserIssue()
+      
+        [HttpGet("getallissues")]
+        public async Task<ActionResult<List<UserIssueList>>> GetUserIssue()
         {
             var issues =await _context.UserIssue.Where(x => x.Status == "Active").ToListAsync();
-            return issues;
+            var UserIssueList =new List<UserIssueList>();
+            foreach ( var i in issues)
+            {
+                var UserIssues= new UserIssueList();
+                var response1 = await _userClient.GetResponse<GetUserByIdResponse>(new GetUserByIdRequest { UserId = i.UserId});
+                var response2  = await _userClient.GetResponse<GetUserByIdResponse>(new GetUserByIdRequest { UserId = i.ReportingUserId});
+                UserIssues.ReportedUserName = response1.Message.Name;
+                UserIssues.ReportingUserName=response2.Message.Name;
+                UserIssues.Issue = i.Issue;
+                UserIssues.CreatedDate = i.CreatedDate;
+                UserIssues.Id=i.Id;
+                UserIssues.Status=i.Status;
+                UserIssues.IssueResolve=i.IssueResolve;
+                UserIssueList.Add(UserIssues);
+            }
+
+            return UserIssueList;
         }
 
         // GET: api/UserIssue/5
