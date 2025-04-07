@@ -20,28 +20,35 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<UserRequestConsumer>(); 
+    x.AddConsumer<UserRequestConsumer>();
     x.AddConsumer<GetUserByIdConsumer>();
+
+    // Change the host to the public IP of the RabbitMQ server
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq://localhost", h =>
+        // Use the public IP address of your RabbitMQ instance here
+        cfg.Host("rabbitmq://98.70.57.195", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username("user");  // Assuming you're still using the default username
+            h.Password("123456");  // Assuming you're still using the default password
         });
 
+        // Define your consumers
         cfg.ReceiveEndpoint("user-service-queue", e =>
         {
             e.ConfigureConsumer<UserRequestConsumer>(context);
         });
+
         cfg.ReceiveEndpoint("GetUserByID-service-queue", e =>
         {
             e.ConfigureConsumer<GetUserByIdConsumer>(context);
         });
     });
 });
+
 
 
 builder.Services.AddScoped<IUserProducer, UserProducer>();
