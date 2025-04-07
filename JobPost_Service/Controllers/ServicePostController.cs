@@ -75,9 +75,13 @@ namespace JobPost_Service.Controllers
                     service.UserId,
                     service.MinSalary,
                     service.MaxSalary,
-                   
+                    service.Timing,
                     service.Location,
-                    
+                    service.PhoneNumber,
+                    service.Email,
+                    service.Experience,
+                    service.PreferredDate,
+                 
                     service.Address,
                     service.DatePosted,
                     UserImage = user?.UserImage // Attach user image
@@ -138,9 +142,9 @@ namespace JobPost_Service.Controllers
             service.MinSalary = servicePost.MinSalary;
             service.MaxSalary = servicePost.MaxSalary;
             service.Timing = servicePost.Timing;
-            service.Type = servicePost.Type;
-            service.PreferredDate = servicePost.PreferredDate;
-            service.UrgencyLevel = servicePost.UrgencyLevel;
+            //service.Type = servicePost.Type;
+           service.PreferredDate = servicePost.PreferredDate;
+            //service.UrgencyLevel = servicePost.UrgencyLevel;
             _context.ServicePosts.Update(service);
           await  _context.SaveChangesAsync();
 

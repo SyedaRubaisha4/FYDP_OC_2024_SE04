@@ -38,8 +38,8 @@ namespace JobPost_Service.Models.DTOs
         [Range(0, double.MaxValue, ErrorMessage = "Salary must be a positive value.")]
         public decimal MaxSalary { get; set; }
         public string? Timing { get; set; }
-        public string Type { get; set; }
+        //public string Type { get; set; }
         public DateTime PreferredDate { get; set; }
-        public UrgencyLevel UrgencyLevel { get; set; }
+        //public UrgencyLevel UrgencyLevel { get; set; }
     }
 }
