@@ -67,7 +67,7 @@ namespace Security.Controllers
         }      
        
         [HttpPost("createuserissue")]
-        public async Task<ActionResult<UserIssue>> PostUserIssue( UserIssueCreateDto issuedto)
+        public async Task<ActionResult<UserIssue>> PostUserIssue(UserIssueCreateDto issuedto)
         {
 
             var issue = new UserIssue { 

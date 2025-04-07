@@ -91,6 +91,45 @@ namespace JobPost_Service.Controllers
 
             return Ok(userList);
         }
+        [HttpGet("GetAcceptedApplicantsByJob/{jobId}")]
+        public async Task<IActionResult> GetAcceptedApplicantsByJob(long jobId)
+        {
+            var userJobEntries = await _context.UserJob
+                .Where(uj => uj.JobId == jobId && uj.Status == "Active" && uj.JobsStatus == "Accepted")
+                .Select(uj => uj.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            var userList = new List<PublishedUser>();
+
+            foreach (var userId in userJobEntries)
+            {
+                PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                userList.Add(getUser);
+            }
+
+            return Ok(userList);
+        }
+        [HttpGet("GetAcceptedApplicantsByService/{jobId}")]
+        public async Task<IActionResult> GetAcceptedApplicantsByService(long jobId)
+        {
+            var userJobEntries = await _context.UserService
+                .Where(uj => uj.ServiceId == jobId && uj.Status == "Active" && uj.ServiceStatus == "Accepted")
+                .Select(uj => uj.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            var userList = new List<PublishedUser>();
+
+            foreach (var userId in userJobEntries)
+            {
+                PublishedUser getUser = await _userRequestProducer.RequestUserById(userId);
+                userList.Add(getUser);
+            }
+
+            return Ok(userList);
+        }
+
 
         [HttpPost("CreateUserService")]
         public async Task<ActionResult<UserService>> CreateUserService(UserServiceCreateDTO UserServiceCreateDTO)
@@ -163,7 +202,7 @@ namespace JobPost_Service.Controllers
             };
 
             _context.AcceptedJobApplication.Add(acceptedJobApplication);
-            var job = _context.UserJob.Where(x => x.UserId == acceptedJobApplication.UserId && x.JobId == AcceptedJobApplicationDTO.JobId).FirstOrDefault();
+            var job = _context.UserJob.Where(x => x.UserId == acceptedJobApplication.ApplicantId && x.JobId == AcceptedJobApplicationDTO.JobId).FirstOrDefault();
             job.JobsStatus = AcceptedJobApplicationDTO.JobsStatus;
             _context.UserJob.Update(job);
             await _context.SaveChangesAsync();
@@ -193,7 +232,15 @@ namespace JobPost_Service.Controllers
 
             };
             _context.AcceptedServiceApplication.Add(acceptedServiceApplication);
-            var service = await _context.UserService.Where(x => x.ServiceId == AcceptedServiceApplicationDTO.ServiceId && x.UserId == AcceptedServiceApplicationDTO.UserId).FirstOrDefaultAsync();
+            var service = await _context.UserService
+     .Where(x => x.ServiceId == AcceptedServiceApplicationDTO.ServiceId && x.UserId == AcceptedServiceApplicationDTO.ApplicantId)
+     .FirstOrDefaultAsync();
+
+            if (service == null)
+            {
+                return NotFound("Service not found for given ServiceId and UserId.");
+            }
+
             service.ServiceStatus = AcceptedServiceApplicationDTO.ServiceStatus;
             _context.UserService.Update(service);
             await _context.SaveChangesAsync();
