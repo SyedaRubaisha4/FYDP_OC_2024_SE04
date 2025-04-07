@@ -81,7 +81,7 @@
                   "metadata": [
                     {
                       "name": "CURRENT_STACK",
-                      "value": "dotnet"
+                      "value": "dotnetcore"
                     }
                   ]
                 }
