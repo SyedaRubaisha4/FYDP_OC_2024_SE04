@@ -25,10 +25,10 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq://localhost", h =>
+        cfg.Host("rabbitmq://98.70.57.195", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username("user");  // Assuming you're still using the default username
+            h.Password("123456");  // Assuming you're still using the default password
         });
 
         // Set up the consumer with the exchange binding
