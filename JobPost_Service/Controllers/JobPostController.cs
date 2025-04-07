@@ -74,6 +74,7 @@ namespace JobPost_Service.Controllers
                 result.Add(new
                 {
                     job.Id,
+                    
                     job.Name,
                     job.Description,
                     job.UserId,
@@ -84,6 +85,10 @@ namespace JobPost_Service.Controllers
                     job.Location,
                     job.JobType,
                     job.Address,
+                   
+                   job.Email,
+                   job.PhoneNumber,
+                   Skills = job.Skills != null ? string.Join(", ", job.Skills) : "",
                     job.DatePosted,
                     UserImage = user?.UserImage // Attach user image
                 });
@@ -143,30 +148,42 @@ namespace JobPost_Service.Controllers
 
         // PUT: api/JobPost/{id}
         [HttpPut("{id}")]
+       
         public async Task<IActionResult> UpdateJobPost(int id, JobPostUpdateDto jobPost)
         {
-            var job=_context.JobPosts.Find(id);
-            if ( job==null)
+            try
             {
-                return BadRequest("no job exist");
-            }
+                Console.WriteLine(jobPost);
+                var job = _context.JobPosts.Find(id);
+                if (job == null)
+                {
+                    return BadRequest("No job exists with the provided ID.");
+                }
 
-           job.Name=jobPost.Name;
-            job.Description=jobPost.Description;
-            job.Location= jobPost.Location;
-            job.Address= jobPost.Address;
-            job.PhoneNumber= jobPost.PhoneNumber;
-            job.Email=jobPost.Email;
-            job.MaxSalary=
-                jobPost.MaxSalary;
-            job.MinSalary= jobPost.MinSalary;
-            job.JobType=jobPost.JobType;
-            job.WorkplaceType=jobPost.WorkplaceType;
-            job.Skills=jobPost.Skills;
-            job.CompanyName=jobPost.CompanyName;
-            _context.JobPosts.Update(job);
-            _context.SaveChanges();
-            return Ok(job);
+                job.Name = jobPost.Name;
+                job.Description = jobPost.Description;
+                job.Location = jobPost.Location;
+                job.Address = jobPost.Address;
+                job.PhoneNumber = jobPost.PhoneNumber;
+                job.Email = jobPost.Email;
+                job.MaxSalary = jobPost.MaxSalary;
+                job.MinSalary = jobPost.MinSalary;
+                job.JobType = jobPost.JobType;
+                job.WorkplaceType = jobPost.WorkplaceType;
+                job.Skills = jobPost.Skills;
+                job.CompanyName = jobPost.CompanyName;
+
+                _context.JobPosts.Update(job);
+                await _context.SaveChangesAsync();
+
+                return Ok(job);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for further debugging
+                Console.WriteLine($"Error updating job post: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         // DELETE: api/JobPost/{id}

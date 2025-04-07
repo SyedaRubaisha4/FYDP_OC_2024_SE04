@@ -49,10 +49,10 @@ namespace JobPost_Service.Models.DTOs
 
 
         [StringLength(50)]
-        public string? Timing { get; set; }
-        public string Type { get; set; }
-        public DateTime PreferredDate { get; set; }
-        public UrgencyLevel UrgencyLevel { get; set; }
+        public string Timing { get; set; }
+        public string? Type { get; set; }
+        public DateTime? PreferredDate { get; set; }
+        public UrgencyLevel? UrgencyLevel { get; set; }
         public string ServiceStatus { get; set; }
     }
 }

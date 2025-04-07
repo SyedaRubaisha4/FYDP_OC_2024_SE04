@@ -544,9 +544,159 @@
       ],
       "UpstreamPathTemplate": "/userjob/getuserappliedservice",
       "UpstreamHttpMethod": [ "GET" ]
-    }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/GetAllFeedback",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/GetAll",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/GetById/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/ById/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/TargetFeedback/{targetId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/Target/{targetId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/SenderFeedback/{senderId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/Sender/{senderId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/PostFeedback",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/Post",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/UpdateFeedback/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/Update/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/DeletedFeedback/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/Delete/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Feedback/GetUserRating/{targetId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "feedbackservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/Feedback/UserRating/{targetId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+   
+        {
+          "DownstreamPathTemplate": "/api/location/save",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/save",
+          "UpstreamHttpMethod": [ "POST" ]
+        },
+        {
+          "DownstreamPathTemplate": "/api/location/get/{userId}",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/get/{userId}",
+          "UpstreamHttpMethod": [ "GET" ]
+        },
+        {
+          "DownstreamPathTemplate": "/api/location/get-all",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/get-all",
+          "UpstreamHttpMethod": [ "GET" ]
+        },
+        {
+          "DownstreamPathTemplate": "/api/location/update",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/update",
+          "UpstreamHttpMethod": [ "PUT" ]
+        },
+        {
+          "DownstreamPathTemplate": "/api/location/delete/{id}",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/delete/{id}",
+          "UpstreamHttpMethod": [ "DELETE" ]
+        },
+        {
+          "DownstreamPathTemplate": "/api/location/GetUsersFromJob/{job}/{userId}",
+          "DownstreamScheme": "https",
+          "DownstreamHostAndPorts": [
+            { "Host": "locationservice1.azurewebsites.net" }
+          ],
+          "UpstreamPathTemplate": "/location/GetUsersFromJob/{job}/{userId}",
+          "UpstreamHttpMethod": [ "GET" ]
+        }
+      ],
+  //    "GlobalConfiguration": {
+  //      "BaseUrl": "https://yourapigateway.azurewebsites.net"
+  //    }
+  //  }
 
-  ],
+
+
+  //],
   "GlobalConfiguration": {
     "BaseUrl": "https://growpakistan.azurewebsites.net"
   }
