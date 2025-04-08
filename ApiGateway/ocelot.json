@@ -633,70 +633,162 @@
       "UpstreamPathTemplate": "/Feedback/UserRating/{targetId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
-   
+
+    {
+      "DownstreamPathTemplate": "/api/location/save",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/save",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/location/get/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/get/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/location/get-all",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/get-all",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/location/update",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/update",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/location/delete/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/delete/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/location/GetUsersFromJob/{job}/{userId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "locationservice1.azurewebsites.net" }
+      ],
+      "UpstreamPathTemplate": "/location/GetUsersFromJob/{job}/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }, // User Issue controller -----> security service
+    {
+      "DownstreamPathTemplate": "/api/UserIssue/getallissues",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
         {
-          "DownstreamPathTemplate": "/api/location/save",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/save",
-          "UpstreamHttpMethod": [ "POST" ]
-        },
-        {
-          "DownstreamPathTemplate": "/api/location/get/{userId}",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/get/{userId}",
-          "UpstreamHttpMethod": [ "GET" ]
-        },
-        {
-          "DownstreamPathTemplate": "/api/location/get-all",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/get-all",
-          "UpstreamHttpMethod": [ "GET" ]
-        },
-        {
-          "DownstreamPathTemplate": "/api/location/update",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/update",
-          "UpstreamHttpMethod": [ "PUT" ]
-        },
-        {
-          "DownstreamPathTemplate": "/api/location/delete/{id}",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/delete/{id}",
-          "UpstreamHttpMethod": [ "DELETE" ]
-        },
-        {
-          "DownstreamPathTemplate": "/api/location/GetUsersFromJob/{job}/{userId}",
-          "DownstreamScheme": "https",
-          "DownstreamHostAndPorts": [
-            { "Host": "locationservice1.azurewebsites.net" }
-          ],
-          "UpstreamPathTemplate": "/location/GetUsersFromJob/{job}/{userId}",
-          "UpstreamHttpMethod": [ "GET" ]
+          "Host": "reportuserservice1.azurewebsites.net"
         }
       ],
-  //    "GlobalConfiguration": {
-  //      "BaseUrl": "https://yourapigateway.azurewebsites.net"
-  //    }
-  //  }
+      "UpstreamPathTemplate": "/getallissues",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssue/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/getuserissue/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssue/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/deleteuserissue/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssue/createuserissue",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/createuserissue",
+      "UpstreamHttpMethod": [ "POST" ]
+    }, // serIssueResolverController  ----->security controller
+    {
+      "DownstreamPathTemplate": "/api/UserIssueResolver",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/getall/responses",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssueResolver/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/get/response/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssueResolver/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/update/response/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssueResolver/issueresponse",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/post/issueresponse",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/UserIssueResolver/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reportuserservice1.azurewebsites.net"
+        }
+      ],
+      "UpstreamPathTemplate": "/delete/response/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    }
 
-
-
-  //],
+  ],  
   "GlobalConfiguration": {
     "BaseUrl": "https://growpakistan.azurewebsites.net"
   }
